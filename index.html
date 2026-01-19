@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Anatomy of a Hit (Spotify)</title>
+  <link rel="stylesheet" href="css/style.css?v=3" />
+</head>
+<body>
+
+<header class="hero">
+  <div class="masthead">
+    <div class="mast-top">
+      <div class="mast-brand">THE DATA REVIEW</div>
+      <div class="mast-meta">Issue 01 · Spotify · 2026</div>
+    </div>
+
+    <h1>Anatomy of a Hit</h1>
+    <p class="dek">
+      A scrollytelling deep-dive into Spotify's audio DNA: what "hit songs" look like, what genres signal,
+      and how streaming culture quietly shapes the sound of success.
+    </p>
+
+    <p class="hero-intro">
+      We analyzed 114,000 tracks from nearly 30,000 artists across 114 genres, using Spotify's audio features to understand what separates chart-toppers from the rest. Our main question: <strong>What makes a song a hit?</strong> Is it the tempo, the energy, the danceability? Or is there a hidden formula buried in the data? This story breaks down the patterns we found – not as a recipe for success, but as a map of how streaming culture shapes the music we hear.
+    </p>
+
+    <p class="hero-kicker">
+      Start by listening to the top hit – then dive into the data behind what makes songs explode.
+    </p>
+
+    <div class="hero-audio">
+      <span class="hero-audio-label">Soundtrack · "Mystery of a Hit"</span>
+      <iframe
+        class="hero-spotify"
+        src="https://open.spotify.com/embed/track/3nqQXoyQOWXiESFLlDF1hG?utm_source=generator"
+        width="100%" height="120" frameborder="0"
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy">
+      </iframe>
+    </div>
+
+    <div class="mast-actions">
+      <div class="mode-toggle" aria-label="Audience mode">
+        <button id="modeProducer" class="mode-btn is-active" type="button">Producer mode</button>
+        <button id="modeCulture" class="mode-btn" type="button">Culture mode</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="scrolly">
+    <article class="steps">
+      <div class="step" data-step="0">
+        <h2>1) What makes a hit?</h2>
+        <p class="step-question">What are we actually looking at when we talk about “hits” in this dataset?</p>
+        <p>Start with context: what’s in the dataset, and what do the “top” tracks look like?</p>
+        <p class="step-transition">To see how exceptional hits really are, we first need to look at the full popularity spectrum.</p>
+      </div>
+
+      <div class="step" data-step="1">
+        <h2>2) The popularity spectrum</h2>
+        <p class="step-question">How rare are hit songs compared with the long tail of releases?</p>
+        <p>Popularity is not evenly distributed — most tracks live in the long tail.</p>
+        <p class="step-transition">Once we see this uneven landscape, we need a clear rule for where “hit” officially begins.</p>
+      </div>
+
+      <div class="step" data-step="2">
+        <h2>2.1) Defining “hit”</h2>
+        <p class="step-question">Where do we draw the line between a solid track and a true hit?</p>
+        <p>We define hits as the top 10% by popularity (threshold shown below) + the key quantiles.</p>
+        <p class="step-transition">With that bar in place, we can ask which musical features actually push songs over it.</p>
+      </div>
+
+      <div class="step" data-step="3">
+        <h2>3) Feature-by-feature anatomy</h2>
+        <p class="step-question">Which audio features most strongly distinguish hits from non-hits?</p>
+        <p>Which audio features best separate high vs low popularity tracks?</p>
+        <div class="data-answer">
+          <strong>Answering the data question:</strong> What are the most important audio features for predicting hit songs? Instrumentalness stands out with the strongest effect (Cohen's d = -0.36), showing hits are far less instrumental than low-popularity tracks. Loudness (d = 0.21) and danceability (d = 0.22) also play key roles, suggesting hits are louder and more danceable to capture attention in a crowded market.
+        </div>
+        <div class="data-answer">
+          <strong>Diving deeper:</strong> How do explicit songs perform compared to non-explicit songs? Explicit tracks hold a surprising edge, averaging 3.5 points higher in popularity. This "power of profanity" might stem from cultural resonance or algorithmic boosts, proving that boldness can break through the noise.
+        </div>
+        <div class="data-answer">
+          <strong>And the rhythm of attention:</strong> How does song duration correlate with popularity? In our short-form world – think TikTok's bite-sized clips – hits show a weak negative correlation (-0.007) with duration. Shorter songs often perform better, a subtle nod to the "TikTok brain effect" shaping modern listening habits.
+        </div>
+        <p class="step-transition">But averages can hide structure — next we see how these features behave across the whole popularity curve.</p>
+      </div>
+
+      <div class="step" data-step="4">
+        <h2>3.1) The “sound” profile</h2>
+        <p class="step-question">How do mood and energy evolve as songs get more popular?</p>
+        <p>How do danceability, energy, and valence change across the popularity spectrum?</p>
+        <p class="step-transition">Sound alone isn’t enough; structure in tempo and length also shapes how tracks perform.</p>
+      </div>
+
+      <div class="step" data-step="5">
+        <h2>3.2) The “structure” profile</h2>
+        <p class="step-question">Are hits simply faster and shorter, or is the pattern more nuanced?</p>
+        <p>Tempo and duration: are hits faster, shorter, or just different?</p>
+        <p class="step-transition">Zooming out from individual features, we can now ask how entire genres carve out distinct fingerprints.</p>
+      </div>
+
+      <div class="step" data-step="6">
+        <h2>4) Genre fingerprints</h2>
+        <p class="step-question">Do genres still have unique sonic fingerprints in the streaming era?</p>
+        <p>Do genres still sound different? A fingerprint view using z-scores per feature.</p>
+        <p class="step-transition">Knowing the fingerprints, we can now check which genres actually break through into the hit zone more often.</p>
+      </div>
+
+      <div class="step" data-step="7">
+        <h2>4.1) Genres & popularity</h2>
+        <p class="step-question">Which genres overperform when it comes to producing hits?</p>
+        <p>Which genres have higher average popularity (within the top genres by count)?</p>
+        <div class="data-answer">
+          <strong>Answering the data question:</strong> How does popularity vary across different genres? Pop leads with an overrepresentation ratio of 6.4 in hits, followed by k-pop (4.4) and metal (4.2). This means these genres punch above their weight in the charts, while acoustic or blues tracks appear far less often among top hits than their share in the dataset would suggest.
+        </div>
+        <p class="step-transition">With that in mind, we can combine everything into a single hit blueprint.</p>
+      </div>
+
+      <div class="step" data-step="8">
+        <h2>5) The hit blueprint</h2>
+        <p class="step-question">What does the average hit look like when we merge all features into one profile?</p>
+        <p>What does the “average hit” look like compared to the overall average?</p>
+        <div class="data-answer">
+          <strong>Building on the features:</strong> The hit blueprint reinforces which traits matter most. Hits differ notably in instrumentalness (-0.11 delta, less instrumental), loudness (+1.19, louder), and danceability (+0.04, more danceable). These aren't huge shifts, but in the scale of streaming, they can make the difference between obscurity and virality.
+        </div>
+        <p class="step-transition">That blueprint isn’t just technical — it has cultural consequences for artists and listeners.</p>
+      </div>
+
+      <div class="step" data-step="9">
+        <h2>6) Why it matters: takeaway</h2>
+        <p class="step-question">So what does this anatomy of a hit tell us about the culture of streaming?</p>
+        <p>
+          What looks like a simple profile of audio features is also a story about streaming culture:
+          algorithms reward tracks that are short, loud and hooky, while explicit content and certain genres
+          are amplified more than others. That creates a quiet tension between artistic freedom and
+          data-optimised songwriting.
+        </p>
+        <div class="step-callout">
+          <strong>Pro/Culture takeaway:</strong> Treat this anatomy as a map of the current streaming landscape,
+          not a recipe. Use it to understand how platforms shape sound – then decide where you want to lean in,
+          and where you want to push back.
+        </div>
+        <div id="explicit-chart"></div>
+        <div id="correlation-text"></div>
+        <p class="step-transition">The rest is up to you: how much you want to play by the data — or play against it.</p>
+      </div>
+    </article>
+
+    <figure class="graphic">
+  <div class="chart-wrap">
+    <div id="chart"></div>
+  </div>
+</figure>
+
+  </section>
+
+  <section class="outro">
+    <h2>Limitations</h2>
+    <p>Popularity is a platform metric. This is correlation-driven storytelling, not causality.</p>
+  </section>
+</main>
+
+<script src="https://unpkg.com/d3@7"></script>
+<script src="https://unpkg.com/scrollama"></script>
+<script type="module" src="js/main.js?v=3"></script>
+<nav id="rail" class="progress-rail" aria-label="Story progress"></nav>
+</body>
+</html>

@@ -1,0 +1,283 @@
+{
+  "meta": {
+    "rows_used": 114000,
+    "hit_threshold_popularity": 63.0
+  },
+  "popularity_hist": [
+    {
+      "bin": "0-9",
+      "count": 22729
+    },
+    {
+      "bin": "10-19",
+      "count": 9338
+    },
+    {
+      "bin": "20-29",
+      "count": 18420
+    },
+    {
+      "bin": "30-39",
+      "count": 14926
+    },
+    {
+      "bin": "40-49",
+      "count": 19220
+    },
+    {
+      "bin": "50-59",
+      "count": 14545
+    },
+    {
+      "bin": "60-69",
+      "count": 9350
+    },
+    {
+      "bin": "70-79",
+      "count": 4271
+    },
+    {
+      "bin": "80-89",
+      "count": 1103
+    },
+    {
+      "bin": "90-100",
+      "count": 98
+    }
+  ],
+  "feature_by_pop_band": [
+    {
+      "pop_band": "0-9",
+      "danceability": 0.5884556821681552,
+      "energy": 0.62383193526332,
+      "valence": 0.5062875784240397,
+      "tempo": 119.72264089929165,
+      "acousticness": 0.31508444958599147,
+      "instrumentalness": 0.14191173887544548,
+      "liveness": 0.18301747987152975,
+      "speechiness": 0.07695859474679924,
+      "duration_min": 3.7109890968953025
+    },
+    {
+      "pop_band": "10-19",
+      "danceability": 0.5495245234525594,
+      "energy": 0.6754673088455772,
+      "valence": 0.4387236774469908,
+      "tempo": 125.15684065110302,
+      "acousticness": 0.26829685081816235,
+      "instrumentalness": 0.3540857618076676,
+      "liveness": 0.20851800171342902,
+      "speechiness": 0.09360889912186764,
+      "duration_min": 4.012399171842651
+    },
+    {
+      "pop_band": "20-29",
+      "danceability": 0.5220058631921825,
+      "energy": 0.6534315497502715,
+      "valence": 0.46706203040173727,
+      "tempo": 122.2960496742671,
+      "acousticness": 0.35163620619815417,
+      "instrumentalness": 0.17794268982464712,
+      "liveness": 0.25084409391965257,
+      "speechiness": 0.11912880564603692,
+      "duration_min": 3.797495368259139
+    },
+    {
+      "pop_band": "30-39",
+      "danceability": 0.5591408950824065,
+      "energy": 0.6642015248492563,
+      "valence": 0.5092266027066863,
+      "tempo": 123.23850167492965,
+      "acousticness": 0.3055422015315557,
+      "instrumentalness": 0.1317571679686453,
+      "liveness": 0.23480066997186116,
+      "speechiness": 0.07959293179686454,
+      "duration_min": 3.8499440763321275
+    },
+    {
+      "pop_band": "40-49",
+      "danceability": 0.5758475338189386,
+      "energy": 0.6324017445369406,
+      "valence": 0.4649542892299688,
+      "tempo": 123.4249928199792,
+      "acousticness": 0.3386065000686785,
+      "instrumentalness": 0.1378811051389178,
+      "liveness": 0.24290436524453696,
+      "speechiness": 0.07470691467221643,
+      "duration_min": 3.9534056581685744
+    },
+    {
+      "pop_band": "50-59",
+      "danceability": 0.5684422344448264,
+      "energy": 0.6152160949879684,
+      "valence": 0.4227952973530423,
+      "tempo": 122.47380543141973,
+      "acousticness": 0.32398112078033686,
+      "instrumentalness": 0.15729403696115504,
+      "liveness": 0.19083255414231695,
+      "speechiness": 0.07417057408044,
+      "duration_min": 3.7120150670333447
+    },
+    {
+      "pop_band": "60-69",
+      "danceability": 0.5819077967914439,
+      "energy": 0.631639627026738,
+      "valence": 0.46941444278074873,
+      "tempo": 121.0514229946524,
+      "acousticness": 0.2956694394983957,
+      "instrumentalness": 0.09363560144919786,
+      "liveness": 0.18475917647058823,
+      "speechiness": 0.07677465240641711,
+      "duration_min": 3.6500645098039217
+    },
+    {
+      "pop_band": "70-79",
+      "danceability": 0.6070266916413017,
+      "energy": 0.6679662608288457,
+      "valence": 0.5018707117771014,
+      "tempo": 120.33295996253804,
+      "acousticness": 0.23040114799110278,
+      "instrumentalness": 0.03997469392413955,
+      "liveness": 0.17300161554671037,
+      "speechiness": 0.07371376726761883,
+      "duration_min": 3.667782627019433
+    },
+    {
+      "pop_band": "80-89",
+      "danceability": 0.643187216681777,
+      "energy": 0.6826450770625567,
+      "valence": 0.5205862194016319,
+      "tempo": 119.37074433363556,
+      "acousticness": 0.1858005480145059,
+      "instrumentalness": 0.026302537207615596,
+      "liveness": 0.16750208522212148,
+      "speechiness": 0.0796143245693563,
+      "duration_min": 3.5530368087035358
+    },
+    {
+      "pop_band": "90-100",
+      "danceability": 0.7039489795918367,
+      "energy": 0.6756326530612246,
+      "valence": 0.43741734693877554,
+      "tempo": 120.03252040816326,
+      "acousticness": 0.2179791530612245,
+      "instrumentalness": 0.0022804151020408164,
+      "liveness": 0.1782704081632653,
+      "speechiness": 0.09699285714285714,
+      "duration_min": 3.4539595238095235
+    }
+  ],
+  "explicit_summary": [
+    {
+      "pop_band": "0-9",
+      "explicit": false,
+      "count": 20886
+    },
+    {
+      "pop_band": "0-9",
+      "explicit": true,
+      "count": 1843
+    },
+    {
+      "pop_band": "10-19",
+      "explicit": false,
+      "count": 8837
+    },
+    {
+      "pop_band": "10-19",
+      "explicit": true,
+      "count": 501
+    },
+    {
+      "pop_band": "20-29",
+      "explicit": false,
+      "count": 16615
+    },
+    {
+      "pop_band": "20-29",
+      "explicit": true,
+      "count": 1805
+    },
+    {
+      "pop_band": "30-39",
+      "explicit": false,
+      "count": 13929
+    },
+    {
+      "pop_band": "30-39",
+      "explicit": true,
+      "count": 997
+    },
+    {
+      "pop_band": "40-49",
+      "explicit": false,
+      "count": 17932
+    },
+    {
+      "pop_band": "40-49",
+      "explicit": true,
+      "count": 1288
+    },
+    {
+      "pop_band": "50-59",
+      "explicit": false,
+      "count": 13148
+    },
+    {
+      "pop_band": "50-59",
+      "explicit": true,
+      "count": 1397
+    },
+    {
+      "pop_band": "60-69",
+      "explicit": false,
+      "count": 8317
+    },
+    {
+      "pop_band": "60-69",
+      "explicit": true,
+      "count": 1033
+    },
+    {
+      "pop_band": "70-79",
+      "explicit": false,
+      "count": 3678
+    },
+    {
+      "pop_band": "70-79",
+      "explicit": true,
+      "count": 593
+    },
+    {
+      "pop_band": "80-89",
+      "explicit": false,
+      "count": 846
+    },
+    {
+      "pop_band": "80-89",
+      "explicit": true,
+      "count": 257
+    },
+    {
+      "pop_band": "90-100",
+      "explicit": false,
+      "count": 65
+    },
+    {
+      "pop_band": "90-100",
+      "explicit": true,
+      "count": 33
+    }
+  ],
+  "hit_blueprint": {
+    "danceability": 0.6014045561871447,
+    "energy": 0.6546103899781373,
+    "valence": 0.4920279352864014,
+    "tempo": 120.8762568430258,
+    "acousticness": 0.25509390535811105,
+    "instrumentalness": 0.05657441981460429,
+    "liveness": 0.17806879755137733,
+    "speechiness": 0.07651160472234368,
+    "duration_min": 3.6493543069523398
+  }
+}

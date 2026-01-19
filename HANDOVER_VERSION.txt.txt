@@ -1,0 +1,4 @@
+Handover version: v1
+Date: 2025-12-29
+Status: runs without console errors
+Main entry: index.html

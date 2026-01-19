@@ -1,0 +1,1464 @@
+{
+  "intro": {
+    "tracks": 114000,
+    "unique_artists": 29859,
+    "unique_genres": 114,
+    "explicit_rate": 0.0855,
+    "median_popularity": 35.0,
+    "median_duration_min": 3.5484333333333336,
+    "median_tempo": 122.017,
+    "example_hits": [
+      {
+        "track_name": "Unholy (feat. Kim Petras)",
+        "artists": "Sam Smith;Kim Petras",
+        "track_genre": "dance",
+        "popularity": 100
+      },
+      {
+        "track_name": "Unholy (feat. Kim Petras)",
+        "artists": "Sam Smith;Kim Petras",
+        "track_genre": "pop",
+        "popularity": 100
+      },
+      {
+        "track_name": "Quevedo: Bzrp Music Sessions, Vol. 52",
+        "artists": "Bizarrap;Quevedo",
+        "track_genre": "hip-hop",
+        "popularity": 99
+      },
+      {
+        "track_name": "I'm Good (Blue)",
+        "artists": "David Guetta;Bebe Rexha",
+        "track_genre": "pop",
+        "popularity": 98
+      },
+      {
+        "track_name": "La Bachata",
+        "artists": "Manuel Turizo",
+        "track_genre": "reggaeton",
+        "popularity": 98
+      },
+      {
+        "track_name": "La Bachata",
+        "artists": "Manuel Turizo",
+        "track_genre": "latino",
+        "popularity": 98
+      },
+      {
+        "track_name": "La Bachata",
+        "artists": "Manuel Turizo",
+        "track_genre": "reggae",
+        "popularity": 98
+      },
+      {
+        "track_name": "I'm Good (Blue)",
+        "artists": "David Guetta;Bebe Rexha",
+        "track_genre": "edm",
+        "popularity": 98
+      },
+      {
+        "track_name": "I'm Good (Blue)",
+        "artists": "David Guetta;Bebe Rexha",
+        "track_genre": "dance",
+        "popularity": 98
+      },
+      {
+        "track_name": "La Bachata",
+        "artists": "Manuel Turizo",
+        "track_genre": "latin",
+        "popularity": 98
+      }
+    ]
+  },
+  "popularity_spectrum": {
+    "hist_5pt": [
+      {
+        "bin": "0-4",
+        "count": 20769
+      },
+      {
+        "bin": "5-9",
+        "count": 2693
+      },
+      {
+        "bin": "10-14",
+        "count": 3447
+      },
+      {
+        "bin": "15-19",
+        "count": 7268
+      },
+      {
+        "bin": "20-24",
+        "count": 10247
+      },
+      {
+        "bin": "25-29",
+        "count": 7332
+      },
+      {
+        "bin": "30-34",
+        "count": 6695
+      },
+      {
+        "bin": "35-39",
+        "count": 8875
+      },
+      {
+        "bin": "40-44",
+        "count": 10232
+      },
+      {
+        "bin": "45-49",
+        "count": 8672
+      },
+      {
+        "bin": "50-54",
+        "count": 7225
+      },
+      {
+        "bin": "55-59",
+        "count": 6975
+      },
+      {
+        "bin": "60-64",
+        "count": 5045
+      },
+      {
+        "bin": "65-69",
+        "count": 3679
+      },
+      {
+        "bin": "70-74",
+        "count": 2432
+      },
+      {
+        "bin": "75-79",
+        "count": 1460
+      },
+      {
+        "bin": "80-84",
+        "count": 683
+      },
+      {
+        "bin": "85-89",
+        "count": 203
+      },
+      {
+        "bin": "90-94",
+        "count": 43
+      },
+      {
+        "bin": "95-99",
+        "count": 25
+      }
+    ],
+    "quantiles": {
+      "0.1": 0.0,
+      "0.25": 17.0,
+      "0.5": 35.0,
+      "0.75": 50.0,
+      "0.9": 63.0
+    },
+    "hit_threshold_top10": 63.0
+  },
+  "feature_anatomy": {
+    "effect_sizes": [
+      {
+        "feature": "acousticness",
+        "mean_top10": 0.25509390535811105,
+        "mean_bottom10": 0.3405227318832709,
+        "delta": -0.08542882652515987,
+        "cohen_d": -0.26411867819712254
+      },
+      {
+        "feature": "loudness",
+        "mean_top10": -7.186973939658941,
+        "mean_bottom10": -8.216587952559301,
+        "delta": 1.0296140129003604,
+        "cohen_d": 0.21106580221066165
+      },
+      {
+        "feature": "instrumentalness",
+        "mean_top10": 0.05657441981460429,
+        "mean_bottom10": 0.10261476302496879,
+        "delta": -0.0460403432103645,
+        "cohen_d": -0.19841140279282687
+      },
+      {
+        "feature": "energy",
+        "mean_top10": 0.6546103899781373,
+        "mean_bottom10": 0.6148779280024969,
+        "delta": 0.0397324619756404,
+        "cohen_d": 0.16551857522947974
+      },
+      {
+        "feature": "danceability",
+        "mean_top10": 0.6014045561871447,
+        "mean_bottom10": 0.5737242883895131,
+        "delta": 0.027680267797631664,
+        "cohen_d": 0.16334666733092004
+      },
+      {
+        "feature": "duration_min",
+        "mean_top10": 3.6493543069523398,
+        "mean_bottom10": 3.5594875083229294,
+        "delta": 0.08986679862941038,
+        "cohen_d": 0.07258271469770512
+      },
+      {
+        "feature": "tempo",
+        "mean_top10": 120.8762568430258,
+        "mean_bottom10": 118.87487078651687,
+        "delta": 2.0013860565089345,
+        "cohen_d": 0.06810527578144948
+      },
+      {
+        "feature": "liveness",
+        "mean_top10": 0.17806879755137733,
+        "mean_bottom10": 0.18681471285892637,
+        "delta": -0.008745915307549035,
+        "cohen_d": -0.060487167379478936
+      },
+      {
+        "feature": "valence",
+        "mean_top10": 0.4920279352864014,
+        "mean_bottom10": 0.5068354225967541,
+        "delta": -0.014807487310352696,
+        "cohen_d": -0.05949079525780259
+      },
+      {
+        "feature": "speechiness",
+        "mean_top10": 0.07651160472234368,
+        "mean_bottom10": 0.07392854556803995,
+        "delta": 0.002583059154303735,
+        "cohen_d": 0.035207531201894286
+      }
+    ],
+    "feature_effects": [
+      {
+        "feature": "instrumentalness",
+        "hit_mean": 0.05657441981460429,
+        "non_hit_mean": 0.16714010316033734,
+        "delta": -0.11056568334573305,
+        "cohen_d": -0.359248857406123
+      },
+      {
+        "feature": "loudness",
+        "hit_mean": -7.186973939658941,
+        "non_hit_mean": -8.37847642958124,
+        "delta": 1.1915024899223,
+        "cohen_d": 0.23751171493721981
+      },
+      {
+        "feature": "danceability",
+        "hit_mean": 0.6014045561871447,
+        "non_hit_mean": 0.5629420016574854,
+        "delta": 0.0384625545296593,
+        "cohen_d": 0.22212423061499312
+      },
+      {
+        "feature": "liveness",
+        "hit_mean": 0.17806879755137733,
+        "non_hit_mean": 0.2175089612440891,
+        "delta": -0.03944016369271178,
+        "cohen_d": -0.20756944668565808
+      },
+      {
+        "feature": "acousticness",
+        "hit_mean": 0.25509390535811105,
+        "non_hit_mean": 0.3215789822546678,
+        "delta": -0.06648507689655675,
+        "cohen_d": -0.20030223566443478
+      },
+      {
+        "feature": "duration_min",
+        "hit_mean": 3.6493543069523398,
+        "non_hit_mean": 3.8173355863761196,
+        "delta": -0.16798127942377983,
+        "cohen_d": -0.09397076191067316
+      },
+      {
+        "feature": "speechiness",
+        "hit_mean": 0.07651160472234368,
+        "non_hit_mean": 0.0855596997026276,
+        "delta": -0.009048094980283916,
+        "cohen_d": -0.08560336943080969
+      },
+      {
+        "feature": "valence",
+        "hit_mean": 0.4920279352864014,
+        "non_hit_mean": 0.47206589861063714,
+        "delta": 0.01996203667576424,
+        "cohen_d": 0.07701615846968116
+      },
+      {
+        "feature": "energy",
+        "hit_mean": 0.6546103899781373,
+        "non_hit_mean": 0.6399080061209965,
+        "delta": 0.014702383857140733,
+        "cohen_d": 0.058460783942832814
+      },
+      {
+        "feature": "tempo",
+        "hit_mean": 120.8762568430258,
+        "non_hit_mean": 122.28960614244625,
+        "delta": -1.413349299420446,
+        "cohen_d": -0.04715043000975099
+      }
+    ],
+    "means_by_pop_band": [
+      {
+        "pop_band": "0-9",
+        "danceability": 0.5884556821681552,
+        "energy": 0.62383193526332,
+        "valence": 0.5062875784240397,
+        "tempo": 119.72264089929165,
+        "acousticness": 0.31508444958599147,
+        "instrumentalness": 0.14191173887544548,
+        "liveness": 0.18301747987152975,
+        "speechiness": 0.07695859474679924,
+        "loudness": -8.309510053235954,
+        "duration_min": 3.7109890968953025
+      },
+      {
+        "pop_band": "10-19",
+        "danceability": 0.5495245234525594,
+        "energy": 0.6754673088455772,
+        "valence": 0.4387236774469908,
+        "tempo": 125.15684065110302,
+        "acousticness": 0.26829685081816235,
+        "instrumentalness": 0.3540857618076676,
+        "liveness": 0.20851800171342902,
+        "speechiness": 0.09360889912186764,
+        "loudness": -8.637479545941314,
+        "duration_min": 4.012399171842651
+      },
+      {
+        "pop_band": "20-29",
+        "danceability": 0.5220058631921825,
+        "energy": 0.6534315497502715,
+        "valence": 0.46706203040173727,
+        "tempo": 122.2960496742671,
+        "acousticness": 0.35163620619815417,
+        "instrumentalness": 0.17794268982464712,
+        "liveness": 0.25084409391965257,
+        "speechiness": 0.11912880564603692,
+        "loudness": -8.735515906623236,
+        "duration_min": 3.797495368259139
+      },
+      {
+        "pop_band": "30-39",
+        "danceability": 0.5591408950824065,
+        "energy": 0.6642015248492563,
+        "valence": 0.5092266027066863,
+        "tempo": 123.23850167492965,
+        "acousticness": 0.3055422015315557,
+        "instrumentalness": 0.1317571679686453,
+        "liveness": 0.23480066997186116,
+        "speechiness": 0.07959293179686454,
+        "loudness": -8.182284336057885,
+        "duration_min": 3.8499440763321275
+      },
+      {
+        "pop_band": "40-49",
+        "danceability": 0.5758475338189386,
+        "energy": 0.6324017445369406,
+        "valence": 0.4649542892299688,
+        "tempo": 123.4249928199792,
+        "acousticness": 0.3386065000686785,
+        "instrumentalness": 0.1378811051389178,
+        "liveness": 0.24290436524453696,
+        "speechiness": 0.07470691467221643,
+        "loudness": -8.053562903225806,
+        "duration_min": 3.9534056581685744
+      },
+      {
+        "pop_band": "50-59",
+        "danceability": 0.5684422344448264,
+        "energy": 0.6152160949879684,
+        "valence": 0.4227952973530423,
+        "tempo": 122.47380543141973,
+        "acousticness": 0.32398112078033686,
+        "instrumentalness": 0.15729403696115504,
+        "liveness": 0.19083255414231695,
+        "speechiness": 0.07417057408044,
+        "loudness": -8.458486833963562,
+        "duration_min": 3.7120150670333447
+      },
+      {
+        "pop_band": "60-69",
+        "danceability": 0.5819077967914439,
+        "energy": 0.631639627026738,
+        "valence": 0.46941444278074873,
+        "tempo": 121.0514229946524,
+        "acousticness": 0.2956694394983957,
+        "instrumentalness": 0.09363560144919786,
+        "liveness": 0.18475917647058823,
+        "speechiness": 0.07677465240641711,
+        "loudness": -7.987263315508021,
+        "duration_min": 3.6500645098039217
+      },
+      {
+        "pop_band": "70-79",
+        "danceability": 0.6070266916413017,
+        "energy": 0.6679662608288457,
+        "valence": 0.5018707117771014,
+        "tempo": 120.33295996253804,
+        "acousticness": 0.23040114799110278,
+        "instrumentalness": 0.03997469392413955,
+        "liveness": 0.17300161554671037,
+        "speechiness": 0.07371376726761883,
+        "loudness": -6.808219386560524,
+        "duration_min": 3.667782627019433
+      },
+      {
+        "pop_band": "80-89",
+        "danceability": 0.643187216681777,
+        "energy": 0.6826450770625567,
+        "valence": 0.5205862194016319,
+        "tempo": 119.37074433363556,
+        "acousticness": 0.1858005480145059,
+        "instrumentalness": 0.026302537207615596,
+        "liveness": 0.16750208522212148,
+        "speechiness": 0.0796143245693563,
+        "loudness": -6.153781504986401,
+        "duration_min": 3.5530368087035358
+      },
+      {
+        "pop_band": "90-100",
+        "danceability": 0.7039489795918367,
+        "energy": 0.6756326530612246,
+        "valence": 0.43741734693877554,
+        "tempo": 120.03252040816326,
+        "acousticness": 0.2179791530612245,
+        "instrumentalness": 0.0022804151020408164,
+        "liveness": 0.1782704081632653,
+        "speechiness": 0.09699285714285714,
+        "loudness": -6.084255102040817,
+        "duration_min": 3.4539595238095235
+      }
+    ],
+    "feature_list": [
+      "danceability",
+      "energy",
+      "valence",
+      "acousticness",
+      "instrumentalness",
+      "liveness",
+      "speechiness",
+      "tempo",
+      "loudness",
+      "duration_min"
+    ]
+  },
+  "genre_fingerprints": {
+    "top_genres": [
+      "acoustic",
+      "punk-rock",
+      "progressive-house",
+      "power-pop",
+      "pop",
+      "pop-film",
+      "piano",
+      "party",
+      "pagode",
+      "opera",
+      "new-age",
+      "mpb"
+    ],
+    "genre_table": [
+      {
+        "genre": "acoustic",
+        "count": 1000,
+        "popularity_mean": 42.483,
+        "explicit_rate": 0.052,
+        "hit_share": 0.071,
+        "danceability": 0.549593,
+        "energy": 0.43536810000000004,
+        "valence": 0.42402300000000004,
+        "acousticness": 0.56681639833,
+        "instrumentalness": 0.03833583693,
+        "speechiness": 0.043247,
+        "tempo": 119.01062399999999,
+        "loudness": -9.447843,
+        "duration_min": 3.5816159499999998
+      },
+      {
+        "genre": "mpb",
+        "count": 1000,
+        "popularity_mean": 40.792,
+        "explicit_rate": 0.005,
+        "hit_share": 0.002,
+        "danceability": 0.5740879999999999,
+        "energy": 0.5797871706,
+        "valence": 0.5564338,
+        "acousticness": 0.420858189,
+        "instrumentalness": 0.015458908759999999,
+        "speechiness": 0.0565688,
+        "tempo": 120.16105499999999,
+        "loudness": -9.110408,
+        "duration_min": 3.820272683333333
+      },
+      {
+        "genre": "new-age",
+        "count": 1000,
+        "popularity_mean": 29.065,
+        "explicit_rate": 0.005,
+        "hit_share": 0.004,
+        "danceability": 0.3484546,
+        "energy": 0.21450062,
+        "valence": 0.1831672,
+        "acousticness": 0.824022422,
+        "instrumentalness": 0.7130209027900001,
+        "speechiness": 0.0456587,
+        "tempo": 107.958746,
+        "loudness": -18.520463,
+        "duration_min": 4.984511383333333
+      },
+      {
+        "genre": "opera",
+        "count": 1000,
+        "popularity_mean": 24.621,
+        "explicit_rate": 0.001,
+        "hit_share": 0.003,
+        "danceability": 0.31356310000000004,
+        "energy": 0.31705399999999995,
+        "valence": 0.2152252,
+        "acousticness": 0.79493148246,
+        "instrumentalness": 0.16291521127000003,
+        "speechiness": 0.046434199999999995,
+        "tempo": 105.584558,
+        "loudness": -13.575679000000001,
+        "duration_min": 3.888963716666667
+      },
+      {
+        "genre": "pagode",
+        "count": 1000,
+        "popularity_mean": 44.298,
+        "explicit_rate": 0.015,
+        "hit_share": 0.008,
+        "danceability": 0.577723,
+        "energy": 0.7121230000000001,
+        "valence": 0.687978,
+        "acousticness": 0.53837212,
+        "instrumentalness": 0.0005658295000000001,
+        "speechiness": 0.0627869,
+        "tempo": 126.859308,
+        "loudness": -7.268763,
+        "duration_min": 3.80535725
+      },
+      {
+        "genre": "party",
+        "count": 1000,
+        "popularity_mean": 20.982,
+        "explicit_rate": 0.045,
+        "hit_share": 0.008,
+        "danceability": 0.667191,
+        "energy": 0.8712369999999999,
+        "valence": 0.6812349000000001,
+        "acousticness": 0.09273522560000001,
+        "instrumentalness": 0.00168788099,
+        "speechiness": 0.0873481,
+        "tempo": 131.30032200000002,
+        "loudness": -4.411871,
+        "duration_min": 3.35112605
+      },
+      {
+        "genre": "piano",
+        "count": 1000,
+        "popularity_mean": 45.273,
+        "explicit_rate": 0.012,
+        "hit_share": 0.133,
+        "danceability": 0.4550983,
+        "energy": 0.32010256400000003,
+        "valence": 0.31326620000000005,
+        "acousticness": 0.704978913,
+        "instrumentalness": 0.51640990172,
+        "speechiness": 0.0468513,
+        "tempo": 118.08467399999999,
+        "loudness": -17.013977999999998,
+        "duration_min": 3.3994423499999997
+      },
+      {
+        "genre": "pop",
+        "count": 1000,
+        "popularity_mean": 47.576,
+        "explicit_rate": 0.074,
+        "hit_share": 0.642,
+        "danceability": 0.630441,
+        "energy": 0.606437,
+        "valence": 0.5062227,
+        "acousticness": 0.34369250999999995,
+        "instrumentalness": 0.00902630391,
+        "speechiness": 0.0799752,
+        "tempo": 120.92707300000001,
+        "loudness": -6.953969,
+        "duration_min": 3.6778796000000002
+      },
+      {
+        "genre": "pop-film",
+        "count": 1000,
+        "popularity_mean": 59.283,
+        "explicit_rate": 0.001,
+        "hit_share": 0.326,
+        "danceability": 0.597146,
+        "energy": 0.6045619,
+        "valence": 0.5292532999999999,
+        "acousticness": 0.44069561599999996,
+        "instrumentalness": 0.008123731810000001,
+        "speechiness": 0.064057,
+        "tempo": 117.257478,
+        "loudness": -7.871622,
+        "duration_min": 4.6609514
+      },
+      {
+        "genre": "power-pop",
+        "count": 1000,
+        "popularity_mean": 26.898,
+        "explicit_rate": 0.033,
+        "hit_share": 0.044,
+        "danceability": 0.47341,
+        "energy": 0.801688,
+        "valence": 0.6145689999999999,
+        "acousticness": 0.08551097744000001,
+        "instrumentalness": 0.06388665367,
+        "speechiness": 0.0579358,
+        "tempo": 134.651615,
+        "loudness": -6.675975,
+        "duration_min": 3.0929325166666666
+      },
+      {
+        "genre": "progressive-house",
+        "count": 1000,
+        "popularity_mean": 46.615,
+        "explicit_rate": 0.052,
+        "hit_share": 0.142,
+        "danceability": 0.6239349999999999,
+        "energy": 0.813359,
+        "valence": 0.36530009999999996,
+        "acousticness": 0.06138703639,
+        "instrumentalness": 0.20048227569,
+        "speechiness": 0.0676695,
+        "tempo": 125.093636,
+        "loudness": -5.421422,
+        "duration_min": 3.4473697666666667
+      },
+      {
+        "genre": "punk-rock",
+        "count": 1000,
+        "popularity_mean": 38.236,
+        "explicit_rate": 0.08,
+        "hit_share": 0.113,
+        "danceability": 0.507329,
+        "energy": 0.80998,
+        "valence": 0.5669669,
+        "acousticness": 0.08259563892,
+        "instrumentalness": 0.03218837973,
+        "speechiness": 0.0635081,
+        "tempo": 132.219025,
+        "loudness": -5.916501,
+        "duration_min": 3.608185033333333
+      }
+    ],
+    "z_scores": [
+      {
+        "genre": "acoustic",
+        "feature": "danceability",
+        "z": 0.2170782848639231
+      },
+      {
+        "genre": "mpb",
+        "feature": "danceability",
+        "z": 0.44731235470812547
+      },
+      {
+        "genre": "new-age",
+        "feature": "danceability",
+        "z": -1.6734672319334332
+      },
+      {
+        "genre": "opera",
+        "feature": "danceability",
+        "z": -2.00142036718426
+      },
+      {
+        "genre": "pagode",
+        "feature": "danceability",
+        "z": 0.48147854551782915
+      },
+      {
+        "genre": "party",
+        "feature": "danceability",
+        "z": 1.3224086031141202
+      },
+      {
+        "genre": "piano",
+        "feature": "danceability",
+        "z": -0.6710988680124601
+      },
+      {
+        "genre": "pop",
+        "feature": "danceability",
+        "z": 0.9769870041439448
+      },
+      {
+        "genre": "pop-film",
+        "feature": "danceability",
+        "z": 0.6640397350905561
+      },
+      {
+        "genre": "power-pop",
+        "feature": "danceability",
+        "z": -0.4989830396080474
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "danceability",
+        "z": 0.915835632092244
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "danceability",
+        "z": -0.18017065279255326
+      },
+      {
+        "genre": "acoustic",
+        "feature": "energy",
+        "z": -0.7247376492893018
+      },
+      {
+        "genre": "mpb",
+        "feature": "energy",
+        "z": -0.05011955587535137
+      },
+      {
+        "genre": "new-age",
+        "feature": "energy",
+        "z": -1.7564656450152618
+      },
+      {
+        "genre": "opera",
+        "feature": "energy",
+        "z": -1.2774128066240118
+      },
+      {
+        "genre": "pagode",
+        "feature": "energy",
+        "z": 0.5680546544230352
+      },
+      {
+        "genre": "party",
+        "feature": "energy",
+        "z": 1.3113164886774047
+      },
+      {
+        "genre": "piano",
+        "feature": "energy",
+        "z": -1.2631721912760103
+      },
+      {
+        "genre": "pop",
+        "feature": "energy",
+        "z": 0.07436855379702235
+      },
+      {
+        "genre": "pop-film",
+        "feature": "energy",
+        "z": 0.06560948630195353
+      },
+      {
+        "genre": "power-pop",
+        "feature": "energy",
+        "z": 0.9864354768836142
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "energy",
+        "z": 1.0409536768382557
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "energy",
+        "z": 1.0251695111586452
+      },
+      {
+        "genre": "acoustic",
+        "feature": "valence",
+        "z": -0.2836055122225473
+      },
+      {
+        "genre": "mpb",
+        "feature": "valence",
+        "z": 0.5278063720011372
+      },
+      {
+        "genre": "new-age",
+        "feature": "valence",
+        "z": -1.7595671294335529
+      },
+      {
+        "genre": "opera",
+        "feature": "valence",
+        "z": -1.5631160681572607
+      },
+      {
+        "genre": "pagode",
+        "feature": "valence",
+        "z": 1.3339077412300615
+      },
+      {
+        "genre": "party",
+        "feature": "valence",
+        "z": 1.2925861007255963
+      },
+      {
+        "genre": "piano",
+        "feature": "valence",
+        "z": -0.9623219294527567
+      },
+      {
+        "genre": "pop",
+        "feature": "valence",
+        "z": 0.22011331932005815
+      },
+      {
+        "genre": "pop-film",
+        "feature": "valence",
+        "z": 0.3612445755378434
+      },
+      {
+        "genre": "power-pop",
+        "feature": "valence",
+        "z": 0.8840582198241299
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "valence",
+        "z": -0.6434587789959456
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "valence",
+        "z": 0.5923530896232387
+      },
+      {
+        "genre": "acoustic",
+        "feature": "acousticness",
+        "z": 0.5653562679642098
+      },
+      {
+        "genre": "mpb",
+        "feature": "acousticness",
+        "z": 0.02870954811549834
+      },
+      {
+        "genre": "new-age",
+        "feature": "acousticness",
+        "z": 1.5110294819714014
+      },
+      {
+        "genre": "opera",
+        "feature": "acousticness",
+        "z": 1.4040703917419395
+      },
+      {
+        "genre": "pagode",
+        "feature": "acousticness",
+        "z": 0.46077476662675254
+      },
+      {
+        "genre": "party",
+        "feature": "acousticness",
+        "z": -1.1777050333180956
+      },
+      {
+        "genre": "piano",
+        "feature": "acousticness",
+        "z": 1.0733404412700789
+      },
+      {
+        "genre": "pop",
+        "feature": "acousticness",
+        "z": -0.25500665195531974
+      },
+      {
+        "genre": "pop-film",
+        "feature": "acousticness",
+        "z": 0.10164611111291894
+      },
+      {
+        "genre": "power-pop",
+        "feature": "acousticness",
+        "z": -1.2042665340122551
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "acousticness",
+        "z": -1.2929633869932085
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "acousticness",
+        "z": -1.214985402523922
+      },
+      {
+        "genre": "acoustic",
+        "feature": "instrumentalness",
+        "z": -0.48933231697664054
+      },
+      {
+        "genre": "mpb",
+        "feature": "instrumentalness",
+        "z": -0.5925010100728532
+      },
+      {
+        "genre": "new-age",
+        "feature": "instrumentalness",
+        "z": 2.5533129183914407
+      },
+      {
+        "genre": "opera",
+        "feature": "instrumentalness",
+        "z": 0.07248661001794669
+      },
+      {
+        "genre": "pagode",
+        "feature": "instrumentalness",
+        "z": -0.6596647268102873
+      },
+      {
+        "genre": "party",
+        "feature": "instrumentalness",
+        "z": -0.654604581280707
+      },
+      {
+        "genre": "piano",
+        "feature": "instrumentalness",
+        "z": 1.6666510432481763
+      },
+      {
+        "genre": "pop",
+        "feature": "instrumentalness",
+        "z": -0.6215102997225509
+      },
+      {
+        "genre": "pop-film",
+        "feature": "instrumentalness",
+        "z": -0.6255806531935302
+      },
+      {
+        "genre": "power-pop",
+        "feature": "instrumentalness",
+        "z": -0.374105117283657
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "instrumentalness",
+        "z": 0.2419038023469037
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "instrumentalness",
+        "z": -0.5170556686642419
+      },
+      {
+        "genre": "acoustic",
+        "feature": "speechiness",
+        "z": -1.2788898570867433
+      },
+      {
+        "genre": "mpb",
+        "feature": "speechiness",
+        "z": -0.27214964783733586
+      },
+      {
+        "genre": "new-age",
+        "feature": "speechiness",
+        "z": -1.0966355549168565
+      },
+      {
+        "genre": "opera",
+        "feature": "speechiness",
+        "z": -1.0380303339802783
+      },
+      {
+        "genre": "pagode",
+        "feature": "speechiness",
+        "z": 0.1977576691268689
+      },
+      {
+        "genre": "party",
+        "feature": "speechiness",
+        "z": 2.0538692777245457
+      },
+      {
+        "genre": "piano",
+        "feature": "speechiness",
+        "z": -1.0065097180516551
+      },
+      {
+        "genre": "pop",
+        "feature": "speechiness",
+        "z": 1.4966927033295725
+      },
+      {
+        "genre": "pop-film",
+        "feature": "speechiness",
+        "z": 0.2937402495415027
+      },
+      {
+        "genre": "power-pop",
+        "feature": "speechiness",
+        "z": -0.16884424871379852
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "speechiness",
+        "z": 0.5667400698295625
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "speechiness",
+        "z": 0.2522593910346189
+      },
+      {
+        "genre": "acoustic",
+        "feature": "tempo",
+        "z": -0.29809611426173677
+      },
+      {
+        "genre": "mpb",
+        "feature": "tempo",
+        "z": -0.1652625127097576
+      },
+      {
+        "genre": "new-age",
+        "feature": "tempo",
+        "z": -1.5741924282980293
+      },
+      {
+        "genre": "opera",
+        "feature": "tempo",
+        "z": -1.8483261597443232
+      },
+      {
+        "genre": "pagode",
+        "feature": "tempo",
+        "z": 0.6081459490722634
+      },
+      {
+        "genre": "party",
+        "feature": "tempo",
+        "z": 1.1209241027927086
+      },
+      {
+        "genre": "piano",
+        "feature": "tempo",
+        "z": -0.4050101954687413
+      },
+      {
+        "genre": "pop",
+        "feature": "tempo",
+        "z": -0.07681485283824299
+      },
+      {
+        "genre": "pop-film",
+        "feature": "tempo",
+        "z": -0.5005217245125426
+      },
+      {
+        "genre": "power-pop",
+        "feature": "tempo",
+        "z": 1.5078784868852217
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "tempo",
+        "z": 0.40427403418168234
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "tempo",
+        "z": 1.227001414901478
+      },
+      {
+        "genre": "acoustic",
+        "feature": "loudness",
+        "z": -0.022481416880790937
+      },
+      {
+        "genre": "mpb",
+        "feature": "loudness",
+        "z": 0.054298706010009794
+      },
+      {
+        "genre": "new-age",
+        "feature": "loudness",
+        "z": -2.0868697540169334
+      },
+      {
+        "genre": "opera",
+        "feature": "loudness",
+        "z": -0.9617312141841837
+      },
+      {
+        "genre": "pagode",
+        "feature": "loudness",
+        "z": 0.4733474988774606
+      },
+      {
+        "genre": "party",
+        "feature": "loudness",
+        "z": 1.1234060845183835
+      },
+      {
+        "genre": "piano",
+        "feature": "loudness",
+        "z": -1.7440834294413925
+      },
+      {
+        "genre": "pop",
+        "feature": "loudness",
+        "z": 0.5449758776920075
+      },
+      {
+        "genre": "pop-film",
+        "feature": "loudness",
+        "z": 0.33617267081924157
+      },
+      {
+        "genre": "power-pop",
+        "feature": "loudness",
+        "z": 0.608230766731097
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "loudness",
+        "z": 0.893692362336243
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "loudness",
+        "z": 0.781041847538861
+      },
+      {
+        "genre": "acoustic",
+        "feature": "duration_min",
+        "z": -0.3756343038897411
+      },
+      {
+        "genre": "mpb",
+        "feature": "duration_min",
+        "z": 0.08425128716534569
+      },
+      {
+        "genre": "new-age",
+        "feature": "duration_min",
+        "z": 2.3277103138624313
+      },
+      {
+        "genre": "opera",
+        "feature": "duration_min",
+        "z": 0.21661720043108568
+      },
+      {
+        "genre": "pagode",
+        "feature": "duration_min",
+        "z": 0.05550961799667391
+      },
+      {
+        "genre": "party",
+        "feature": "duration_min",
+        "z": -0.8197826101756497
+      },
+      {
+        "genre": "piano",
+        "feature": "duration_min",
+        "z": -0.7266783014358665
+      },
+      {
+        "genre": "pop",
+        "feature": "duration_min",
+        "z": -0.19013664388641882
+      },
+      {
+        "genre": "pop-film",
+        "feature": "duration_min",
+        "z": 1.7042182711334575
+      },
+      {
+        "genre": "power-pop",
+        "feature": "duration_min",
+        "z": -1.3173151290581449
+      },
+      {
+        "genre": "progressive-house",
+        "feature": "duration_min",
+        "z": -0.6343233612100293
+      },
+      {
+        "genre": "punk-rock",
+        "feature": "duration_min",
+        "z": -0.32443634093314644
+      }
+    ],
+    "features": [
+      "danceability",
+      "energy",
+      "valence",
+      "acousticness",
+      "instrumentalness",
+      "speechiness",
+      "tempo",
+      "loudness",
+      "duration_min"
+    ]
+  },
+  "hit_blueprint": {
+    "hit_threshold_top10": 63.0,
+    "global_means": {
+      "danceability": 0.5668000657894736,
+      "energy": 0.6413827583964913,
+      "valence": 0.47406823097368417,
+      "tempo": 122.1478372894737,
+      "acousticness": 0.31491006248000003,
+      "instrumentalness": 0.15604958922122808,
+      "liveness": 0.21355283605263156,
+      "speechiness": 0.08465211228070176,
+      "loudness": -8.258960368421052,
+      "duration_min": 3.8004858852339187
+    },
+    "hit_means": {
+      "danceability": 0.6014045561871447,
+      "energy": 0.6546103899781373,
+      "valence": 0.4920279352864014,
+      "tempo": 120.8762568430258,
+      "acousticness": 0.25509390535811105,
+      "instrumentalness": 0.05657441981460429,
+      "liveness": 0.17806879755137733,
+      "speechiness": 0.07651160472234368,
+      "loudness": -7.186973939658941,
+      "duration_min": 3.6493543069523398
+    },
+    "deltas": {
+      "danceability": 0.034604490397671106,
+      "energy": 0.013227631581645971,
+      "valence": 0.017959704312717206,
+      "tempo": -1.2715804464478992,
+      "acousticness": -0.05981615712188898,
+      "instrumentalness": -0.09947516940662379,
+      "liveness": -0.03548403850125423,
+      "speechiness": -0.008140507558358073,
+      "loudness": 1.071986428762111,
+      "duration_min": -0.15113157828157897
+    }
+  },
+  "hit_threshold": 63.0,
+  "feature_effects": [
+    {
+      "feature": "instrumentalness",
+      "hit_mean": 0.05657441981460429,
+      "non_hit_mean": 0.16714010316033734,
+      "delta": -0.11056568334573305,
+      "cohen_d": -0.359248857406123
+    },
+    {
+      "feature": "loudness",
+      "hit_mean": -7.186973939658941,
+      "non_hit_mean": -8.37847642958124,
+      "delta": 1.1915024899223,
+      "cohen_d": 0.23751171493721981
+    },
+    {
+      "feature": "danceability",
+      "hit_mean": 0.6014045561871447,
+      "non_hit_mean": 0.5629420016574854,
+      "delta": 0.0384625545296593,
+      "cohen_d": 0.22212423061499312
+    },
+    {
+      "feature": "liveness",
+      "hit_mean": 0.17806879755137733,
+      "non_hit_mean": 0.2175089612440891,
+      "delta": -0.03944016369271178,
+      "cohen_d": -0.20756944668565808
+    },
+    {
+      "feature": "acousticness",
+      "hit_mean": 0.25509390535811105,
+      "non_hit_mean": 0.3215789822546678,
+      "delta": -0.06648507689655675,
+      "cohen_d": -0.20030223566443478
+    },
+    {
+      "feature": "duration_min",
+      "hit_mean": 3.6493543069523398,
+      "non_hit_mean": 3.8173355863761196,
+      "delta": -0.16798127942377983,
+      "cohen_d": -0.09397076191067316
+    },
+    {
+      "feature": "speechiness",
+      "hit_mean": 0.07651160472234368,
+      "non_hit_mean": 0.0855596997026276,
+      "delta": -0.009048094980283916,
+      "cohen_d": -0.08560336943080969
+    },
+    {
+      "feature": "valence",
+      "hit_mean": 0.4920279352864014,
+      "non_hit_mean": 0.47206589861063714,
+      "delta": 0.01996203667576424,
+      "cohen_d": 0.07701615846968116
+    },
+    {
+      "feature": "energy",
+      "hit_mean": 0.6546103899781373,
+      "non_hit_mean": 0.6399080061209965,
+      "delta": 0.014702383857140733,
+      "cohen_d": 0.058460783942832814
+    },
+    {
+      "feature": "tempo",
+      "hit_mean": 120.8762568430258,
+      "non_hit_mean": 122.28960614244625,
+      "delta": -1.413349299420446,
+      "cohen_d": -0.04715043000975099
+    }
+  ],
+  "takeaway": {
+    "top_effects": [
+      {
+        "feature": "acousticness",
+        "mean_top10": 0.25509390535811105,
+        "mean_bottom10": 0.3405227318832709,
+        "delta": -0.08542882652515987,
+        "cohen_d": -0.26411867819712254
+      },
+      {
+        "feature": "loudness",
+        "mean_top10": -7.186973939658941,
+        "mean_bottom10": -8.216587952559301,
+        "delta": 1.0296140129003604,
+        "cohen_d": 0.21106580221066165
+      },
+      {
+        "feature": "instrumentalness",
+        "mean_top10": 0.05657441981460429,
+        "mean_bottom10": 0.10261476302496879,
+        "delta": -0.0460403432103645,
+        "cohen_d": -0.19841140279282687
+      },
+      {
+        "feature": "energy",
+        "mean_top10": 0.6546103899781373,
+        "mean_bottom10": 0.6148779280024969,
+        "delta": 0.0397324619756404,
+        "cohen_d": 0.16551857522947974
+      },
+      {
+        "feature": "danceability",
+        "mean_top10": 0.6014045561871447,
+        "mean_bottom10": 0.5737242883895131,
+        "delta": 0.027680267797631664,
+        "cohen_d": 0.16334666733092004
+      },
+      {
+        "feature": "duration_min",
+        "mean_top10": 3.6493543069523398,
+        "mean_bottom10": 3.5594875083229294,
+        "delta": 0.08986679862941038,
+        "cohen_d": 0.07258271469770512
+      },
+      {
+        "feature": "tempo",
+        "mean_top10": 120.8762568430258,
+        "mean_bottom10": 118.87487078651687,
+        "delta": 2.0013860565089345,
+        "cohen_d": 0.06810527578144948
+      },
+      {
+        "feature": "liveness",
+        "mean_top10": 0.17806879755137733,
+        "mean_bottom10": 0.18681471285892637,
+        "delta": -0.008745915307549035,
+        "cohen_d": -0.060487167379478936
+      }
+    ],
+    "genre_overrepresentation": [
+      {
+        "genre": "pop",
+        "ratio": 6.40034980323568,
+        "hit_share": 0.05614341932662877,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "k-pop",
+        "ratio": 4.376563183209445,
+        "hit_share": 0.03839090511587232,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "metal",
+        "ratio": 4.187144731088763,
+        "hit_share": 0.036729339746392656,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "electro",
+        "ratio": 4.107389593353739,
+        "hit_share": 0.036029733275032796,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "house",
+        "ratio": 3.6288587669435945,
+        "hit_share": 0.031832094446873634,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "edm",
+        "ratio": 3.2998688237866203,
+        "hit_share": 0.02894621775251421,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "pop-film",
+        "ratio": 3.2500218627022304,
+        "hit_share": 0.0285089637079143,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "indie-pop",
+        "ratio": 3.070572802798426,
+        "hit_share": 0.02693484914735461,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "hard-rock",
+        "ratio": 3.05063401836467,
+        "hit_share": 0.026759947529514647,
+        "overall_share": 0.008771929824561403
+      },
+      {
+        "genre": "hip-hop",
+        "ratio": 2.831307389593354,
+        "hit_share": 0.024836029733275033,
+        "overall_share": 0.008771929824561403
+      }
+    ],
+    "explicit_analysis": {
+      "explicit_mean_pop": 36.4541910331384,
+      "non_explicit_mean_pop": 32.937891475545065,
+      "delta": 3.516299557593335
+    },
+    "duration_pop_correlation": -0.007101208619704801
+  },
+  "explicit_analysis": {
+    "explicit_mean_pop": 36.4541910331384,
+    "non_explicit_mean_pop": 32.937891475545065,
+    "delta": 3.516299557593335
+  },
+  "corr_duration_pop": -0.007101208619704801
+}

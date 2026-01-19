@@ -1,0 +1,109 @@
+﻿Language laboratory: Communication of statistics and data
+business analytics
+
+The Anatomy of a hit
+Giorgia Bertoldo
+
+Hugo Kolling Duro
+Paulina Olivas Garcia
+
+Regina Pichler
+
+torytelling group p
+
+ data s roject
+
+
+
+Scenario
+We are commissioned by Rolling Stone, one of the most influential cultural magazines in the music industry, to create a data-
+driven feature for their digital platform. The goal is to reveal the underlying structure of today’s most popular music on
+Spotify — not through opinion or taste, but through data. As release dates are not included in the dataset, rather than
+focusing on historical evolution this project will analyze the “Anatomy” of popular tracks on Spotify.
+
+Rolling Stone’s editorial team envisions a visually rich, scroll-based
+narrative — something that speaks to their curious, culture-aware, digitally
+native readers, while keeping the visual tone aligned with their journalistic
+aesthetic.
+
+The final piece should blend statistical clarity with cultural storytelling,
+helping readers not only see what defines a hit, but why it matters in
+today’s algorithmic music landscape.
+
+
+
+THE AUDIENCE
+EMERGING MUSICIANS CULTURE-INTERESTED
+
+BEDROOM PRODUCERS YOUNG ADULTS
+CASUAL MUSIC LISTENERS
+
+Very high interest in music Medium familiarity with
+creation popculture
+
+Low/medium undersatanding Low familiarity with audio
+of music analytics features
+
+Short attention span: expect stimulation Medium attention span: as long as
+and immediate feedback visuals are engaging 
+High interest in topic: strong desire to High interest in topic: want to
+improve their music understand cultural/music trends 
+Interest in angles: Practical “what should I Interest in angles: “What defines
+change in my song?” today’s sound”
+Motivation: Improve track quality, follow Motivation: Curiosity, learning, cultural
+trends, increase chances of virality discovery. 
+
+
+
+Data questions
+The "TikTok Brain"-Effect The Power of Profanity
+Do shorter songs  outperform Does the "Parental Advisory"
+longer ones in the streaming warning act as a barrier to entry,
+era? or is it actually a magnet for
+
+The Pop Singularity higher popularity? The Anatomy of Success 
+Are the boundaries between Can we construct the average
+genres blurring into one shape of a modern hit?
+universal sound profile?
+
+
+
+1. What Makes a Hit? (Intro + Hook) 4. Genre Fingerprints: Do Genres Still
+Frame the central question (“What defines a hit Sound Different?
+today?”) and set tone to pull readers into the story Uses average audio features per genre to reveal:
+
+Present the dataset: 169k tracks, 20+ audio & whether genres maintain unique profiles or
+metadata variables. overlap
+Explain the mission: dissect the anatomy of  Directly answers the pop singularity
+today’s most popular songs. question
+
+2. The Popularity Spectrum 5. The Hit Blueprint: Synthesizing the
+(Distribution of Popularity) FORMAT & Findings
+Popularity column to show: Combines the insights to visualize the profile
+
+Histogram of popularity
+What “being popular” means in STRUCTURE: of a popular track:
+
+common feature combinations
+Spotify terms which genres dominate in popularity
+
+Goal: The reader realizes that hits are This section visually constructs:
+rare and worth exploring. SCROLLYTELLING “This is the average shape of a modern hit.”
+
+3. Feature-by-Feature Anatomy of Popular 6. Why It Matters: The Takeaway
+Tracks Connects insights to streaming culture:
+
+Highlight how features like duration, valence Explores how streaming algorithms
+
+and explicit rating distinguish high- and low- influence song structure
+
+popularity tracks. Examines the tension between artistic
+
+Answers the questions about the “TikTok freedom and data optimization
+
+brain” and the power of profanity 
+
+
+
+Thank
+You

@@ -1,0 +1,42 @@
+ANATOMY OF A HIT — RUN GUIDE (Windows)
+
+What this is:
+A small scrollytelling mini-website (HTML/CSS/JS) that visualizes our Spotify analysis results.
+It runs locally in your browser (no installation besides Python).
+
+1) Unzip
+- Extract the ZIP anywhere (e.g., Desktop).
+- You should see: index.html, css/, js/, data/, scripts/, README.md
+
+2) Start the local server
+- Open Command Prompt (CMD)
+- Go into the extracted folder (the one that contains index.html):
+
+  cd /d "FULL\PATH\TO\THE\PROJECT\FOLDER"
+
+Example:
+  cd /d "C:\Users\YOURNAME\Desktop\Project"
+
+- Start the server:
+  py -m http.server 8000
+
+(If "py" doesn’t work, try:)
+  python -m http.server 8000
+
+3) Open the website
+- Open your browser and go to:
+  http://localhost:8000/index.html
+
+4) Stop the server
+- Go back to the CMD window and press:
+  CTRL + C
+
+Where to edit things:
+- Visuals + charts: js/charts.js
+- Scrollytelling logic + step switching: js/main.js
+- Styling: css/style.css
+- Data used by charts: data/processed/story.json
+
+If something is blank:
+- Open DevTools (F12) → Console and check for errors
+- Make sure you opened it via localhost (NOT by double-clicking index.html)
