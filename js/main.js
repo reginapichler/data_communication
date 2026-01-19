@@ -322,11 +322,22 @@ chapterScroller
     step: ".chapter-break",
     offset: 0.5
   })
-  .onStepEnter(() => {
+  .onStepEnter((resp) => {
     document.body.classList.add("chapter-break-active");
+    if (resp.element) {
+      resp.element.classList.remove("is-exiting");
+      resp.element.classList.add("is-active");
+    }
   })
-  .onStepExit(() => {
+  .onStepExit((resp) => {
     document.body.classList.remove("chapter-break-active");
+    if (resp.element) {
+      resp.element.classList.remove("is-active");
+      resp.element.classList.add("is-exiting");
+      setTimeout(() => {
+        resp.element.classList.remove("is-exiting");
+      }, 420);
+    }
   });
 
   // Mode toggle events

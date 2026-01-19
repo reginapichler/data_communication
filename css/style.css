@@ -159,19 +159,26 @@ button, input, select, textarea{
   margin: 0 auto;
 }
 
-.steps{ padding-top: 6px; }
+.steps{
+  padding-top: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .step{
-  margin: 0 0 54vh 0;
+  margin: 0 auto 54vh auto;
+  width: min(520px, 100%);
   padding: 18px 18px 16px;
   border-left: 4px solid rgba(177,22,42,0.28);
   background: rgba(255,255,255,0.55);
   border-radius: 12px;
   box-shadow: 0 10px 24px rgba(0,0,0,0.06);
   backdrop-filter: blur(8px);
-  transform: scale(0.97);
-  opacity: 0.75;
-  transition: transform 320ms ease, opacity 320ms ease, box-shadow 320ms ease, border-color 320ms ease;
+  opacity: 0.68;
+  transform: translateY(18px) scale(0.97);
+  transition: transform 420ms ease, opacity 420ms ease, box-shadow 320ms ease, border-color 320ms ease;
+  will-change: transform, opacity;
 }
 
 .step h2{
@@ -187,8 +194,9 @@ button, input, select, textarea{
 }
 
 .chapter-break{
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  grid-column: 1 / -1;
+  width: 100%;
+  margin: 0;
   min-height: 100vh;
   padding: 72px 20px;
   text-align: center;
@@ -199,12 +207,18 @@ button, input, select, textarea{
   gap: 12px;
   position: relative;
   z-index: 5;
+  opacity: 0;
+  transform: translateY(120px) scale(0.82);
+  transition: opacity 700ms ease, transform 700ms ease;
 }
 
 .chapter-break h2{
   margin: 0;
   font-size: 34px;
   letter-spacing: 0.03em;
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 820ms ease, transform 820ms ease;
 }
 
 .chapter-break p{
@@ -212,6 +226,35 @@ button, input, select, textarea{
   max-width: 62ch;
   font-size: 18px;
   color: var(--muted);
+  opacity: 0;
+  transform: translateY(34px);
+  transition: opacity 980ms ease, transform 980ms ease;
+}
+
+.chapter-break.is-active{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.chapter-break.is-active h2{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chapter-break.is-active p{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.chapter-break.is-exiting{
+  opacity: 0;
+  transform: translateY(-120px) scale(0.86);
+}
+
+.chapter-break.is-exiting h2,
+.chapter-break.is-exiting p{
+  opacity: 0;
+  transform: translateY(-28px);
 }
 
 body.chapter-break-active .graphic{
@@ -223,8 +266,9 @@ body.chapter-break-active .graphic{
 .step.is-active{
   border-left-color: var(--accent);
   box-shadow: 0 18px 40px rgba(0,0,0,0.10);
-  transform: translateY(-2px);
-  transition: 180ms ease;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: 200ms ease;
 }
 
 .graphic{
