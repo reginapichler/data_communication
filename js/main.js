@@ -5,11 +5,12 @@ let __renderRaf = null;
 function safeRenderStep(stepId, story) {
   if (__renderRaf) cancelAnimationFrame(__renderRaf);
   __renderRaf = requestAnimationFrame(() => {
-    safeRenderStep(stepId, story);
+    renderStep(stepId, story);
   });
 }
 
 const scroller = scrollama();
+const chapterScroller = scrollama();
 let dataset = null;
 
 function getHitGate(story) {
@@ -55,6 +56,7 @@ const COPY = {
       "Genre Blueprints",
       "Genre Winners",
       "Hit Checklist",
+      "Consistency Test",
       "Action Plan"
     ],
     bodies: [
@@ -67,6 +69,7 @@ const COPY = {
       "Genres have their own audio signatures. Match or tweak to stand out.",
       "Some genres crush it in popularity and hits. Learn from their overperformance.",
       "The average hit profile: A practical delta from the norm for your next session.",
+      "Are hits more consistent than non-hits? Check how tight the feature spread gets.",
       "Synthesize it: Prioritize features, respect genres, iterate with data in mind."
     ],
     callouts: [
@@ -79,6 +82,7 @@ const COPY = {
       "<strong>Producer takeaway:</strong> Tune toward your genre’s fingerprint, not the global average.",
       "<strong>Producer takeaway:</strong> Use the toggle (Popularity / Explicit / Hit share) to pick your reference targets.",
       "<strong>Producer takeaway:</strong> Blueprint = targeting. It’s descriptive, not causal — use it to guide iteration.",
+      "<strong>Producer takeaway:</strong> Consistency can signal a market “sound” — diversity can be a differentiator.",
       "<strong>Producer takeaway:</strong> Pick a genre target → tune the top separators → then refine structure."
     ]
   },
@@ -94,6 +98,7 @@ const COPY = {
       "Genre DNA",
       "Chart Conquerors",
       "The Hit Formula?",
+      "Homogeneity vs Diversity",
       "What It All Means"
     ],
     bodies: [
@@ -106,6 +111,7 @@ const COPY = {
       "Genres aren't just labels – they have sonic fingerprints. Z-scores reveal where they align with the crowd or stand apart in their uniqueness.",
       "Some genres dominate the charts far beyond their numbers. Pop and k-pop reign supreme, while others struggle to break through the algorithm's gate.",
       "Picture the average hit: a blueprint of deltas from the norm. Not a recipe, but a map of what tends to work in this wild landscape.",
+      "Do hits converge on a narrow sound, or stay diverse? Variance shows whether success rewards conformity or variety.",
       "Beyond the charts, what does this say about us? Algorithms amplify trends, culture shapes sound, and in the quest for hits, diversity sometimes gets lost."
     ],
     callouts: [
@@ -118,6 +124,7 @@ const COPY = {
       "<strong>Identity crisis:</strong> Genres blend and diverge, showing how music evolves while holding onto roots.",
       "<strong>Power dynamics:</strong> Genre success mixes art, industry, and the invisible hand of recommendation engines.",
       "<strong>Cautionary tale:</strong> The 'average hit' is a ghost – inspiring, not prescriptive. Use it as a guide, not a cage.",
+      "<strong>Tension point:</strong> If hits cluster tightly, the algorithm rewards sameness; if not, diversity still survives.",
       "<strong>Final reflection:</strong> In chasing hits, we glimpse the soul of modern music: optimized, yet yearning for variety."
     ]
   }
@@ -129,7 +136,8 @@ const groups = [
   { label: "The Spectrum", start: 1, end: 2 },
   { label: "The Anatomy", start: 3, end: 5 },
   { label: "The Genres", start: 6, end: 7 },
-  { label: "The Blueprint", start: 8, end: 9 }
+  { label: "The Blueprint", start: 8, end: 9 },
+  { label: "The Meaning", start: 10, end: 10 }
 ];
 
 let currentStep = 0;
@@ -173,7 +181,7 @@ function applyMode(newMode) {
   // Rebuild the rail so tooltips match this mode’s titles
   buildRail();
   setActiveDot(currentStep);
-  if (dataset) renderStep(currentStep, dataset);
+  if (dataset) safeRenderStep(currentStep, dataset);
 
 }
 
@@ -283,7 +291,7 @@ async function init() {
   applyMode(mode);
 
   // Initial chart
-  renderStep(0, dataset);
+  safeRenderStep(0, dataset);
   updateHitGateMotif(0, dataset);
 
 scroller
@@ -293,14 +301,32 @@ scroller
   })
   .onStepEnter((resp) => {
     document.querySelectorAll(".step").forEach((s) => s.classList.remove("is-active"));
+    const graphic = document.querySelector(".graphic");
+    if (graphic) graphic.classList.add("is-active");
     resp.element.classList.add("is-active");
 
     const stepId = Number(resp.element.dataset.step);
     if (!Number.isFinite(stepId)) return;
 
     setActiveDot(stepId);
-    renderStep(stepId, dataset);
+    safeRenderStep(stepId, dataset);
     updateHitGateMotif(stepId, dataset);
+  })
+  .onStepExit(() => {
+    const graphic = document.querySelector(".graphic");
+    if (graphic) graphic.classList.remove("is-active");
+  });
+
+chapterScroller
+  .setup({
+    step: ".chapter-break",
+    offset: 0.5
+  })
+  .onStepEnter(() => {
+    document.body.classList.add("chapter-break-active");
+  })
+  .onStepExit(() => {
+    document.body.classList.remove("chapter-break-active");
   });
 
   // Mode toggle events
@@ -310,10 +336,22 @@ scroller
   if (bCult) bCult.addEventListener("click", () => applyMode("culture"));
 
   // Make scrollama reliable (fixes “only updates after scrolling back up”)
-  window.addEventListener("resize", () => scroller.resize());
-  requestAnimationFrame(() => scroller.resize());
-  setTimeout(() => scroller.resize(), 300);
-  setTimeout(() => scroller.resize(), 1200);
+  window.addEventListener("resize", () => {
+    scroller.resize();
+    chapterScroller.resize();
+  });
+  requestAnimationFrame(() => {
+    scroller.resize();
+    chapterScroller.resize();
+  });
+  setTimeout(() => {
+    scroller.resize();
+    chapterScroller.resize();
+  }, 300);
+  setTimeout(() => {
+    scroller.resize();
+    chapterScroller.resize();
+  }, 1200);
 }
 
 init();

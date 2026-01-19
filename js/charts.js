@@ -44,6 +44,14 @@ function getSize() {
   return { width, height };
 }
 
+const AXIS_TICK_SIZE = 12;
+const AXIS_LABEL_SIZE = 13;
+const LEGEND_LABEL_SIZE = 12;
+
+let __variancePromise = null;
+let __varianceCache = null;
+let __varianceRunId = 0;
+
 function tooltip() {
   let tip = d3.select("body").select(".tooltip");
   if (tip.empty()) tip = d3.select("body").append("div").attr("class", "tooltip");
@@ -69,8 +77,8 @@ function baseSvg(title, subtitle) {
   const margin = {
     top: 48,
     right: 24,
-    bottom: 72,
-    left: 80  // Reduced left margin to give more space for bars
+    bottom: 88,
+    left: 90  // Slightly larger for clearer axis-label spacing
   };
   const w = width - margin.left - margin.right;
   const h = height - margin.top - margin.bottom;
@@ -426,14 +434,14 @@ function drawPopularityHist(story) {
     .attr("transform", "rotate(-35)")
     .style("text-anchor", "end")
     .style("fill", "#444")
-    .style("font-size", "13px")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
     .style("font-weight", "600");
 
   g.append("g")
     .call(d3.axisLeft(y).ticks(6))
     .selectAll("text")
     .style("fill", "#444")
-    .style("font-size", "13px")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
     .style("font-weight", "600");
 
   // Axis labels - larger and more visible
@@ -443,7 +451,7 @@ function drawPopularityHist(story) {
     .attr("y", h + 50)
     .style("fill", "#444")
     .style("font-weight", "700")
-    .style("font-size", "14px")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Popularity Bins");
 
   g.append("text")
@@ -453,7 +461,7 @@ function drawPopularityHist(story) {
     .attr("y", -50)
     .style("fill", "#444")
     .style("font-weight", "700")
-    .style("font-size", "14px")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Track Count");
 
   const bars = g
@@ -955,7 +963,12 @@ function drawEffectSizes(story) {
       .text((d, i) => `${i + 1}. Difference: ${d.delta.toFixed(2)}`);
   }
 
-  root.append("g").call(d3.axisLeft(y)).selectAll("text").style("fill", "#444").style("font-weight", 800);
+  root.append("g")
+    .call(d3.axisLeft(y))
+    .selectAll("text")
+    .style("fill", "#444")
+    .style("font-weight", 800)
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
   root
     .append("g")
     .attr("transform", `translate(0,${innerH})`)
@@ -963,7 +976,7 @@ function drawEffectSizes(story) {
     .selectAll("text")
     .style("fill", "#444")
     .style("font-weight", 800)
-    .style("font-size", "11px");
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
 
   // Axis labels
   root.append("text")
@@ -972,7 +985,7 @@ function drawEffectSizes(story) {
     .attr("y", innerH + 35)
     .style("fill", "#444")
     .style("font-weight", "600")
-    .style("font-size", "13px")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Difference (Hits - Average)");
 
   root.append("text")
@@ -1032,9 +1045,14 @@ function drawFeatureLines01(story) {
     .selectAll("text")
     .attr("transform", "rotate(-35)")
     .style("text-anchor", "end")
-    .style("fill", "#444");
+    .style("fill", "#444")
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
 
-  g.append("g").call(d3.axisLeft(y).ticks(5)).selectAll("text").style("fill", "#444");
+  g.append("g")
+    .call(d3.axisLeft(y).ticks(5))
+    .selectAll("text")
+    .style("fill", "#444")
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
 
   // Axis labels
   g.append("text")
@@ -1043,6 +1061,7 @@ function drawFeatureLines01(story) {
     .attr("y", h + 50)
     .style("fill", "#444")
     .style("font-weight", "600")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Popularity Band");
 
   g.append("text")
@@ -1052,6 +1071,7 @@ function drawFeatureLines01(story) {
     .attr("y", -50)
     .style("fill", "#444")
     .style("font-weight", "600")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Feature Value (0-1)");
 
   // Special colors and emphasis for energy and danceability
@@ -1257,9 +1277,14 @@ function drawStructureLines(story) {
     .selectAll("text")
     .attr("transform", "rotate(-35)")
     .style("text-anchor", "end")
-    .style("fill", "#444");
+    .style("fill", "#444")
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
 
-  g.append("g").call(d3.axisLeft(y).ticks(5)).selectAll("text").style("fill", "#444");
+  g.append("g")
+    .call(d3.axisLeft(y).ticks(5))
+    .selectAll("text")
+    .style("fill", "#444")
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
 
   // Axis labels
   g.append("text")
@@ -1268,6 +1293,7 @@ function drawStructureLines(story) {
     .attr("y", chartH + 50)
     .style("fill", "#444")
     .style("font-weight", "600")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Popularity Band");
 
   g.append("text")
@@ -1277,6 +1303,7 @@ function drawStructureLines(story) {
     .attr("y", -50)
     .style("fill", "#444")
     .style("font-weight", "600")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Normalized Value (0-1)");
 
   const color = d3.scaleOrdinal().domain(keys).range(["#111", "#777"]);
@@ -1445,6 +1472,20 @@ function drawGenreHeatmap(story) {
 
   const color = d3.scaleDiverging().domain([-maxAbs, 0, maxAbs]).interpolator(d3.interpolateRdBu);
 
+  const normalizeGenre = (value) => String(value || "").toLowerCase();
+  const keyGenreSet = new Set([
+    "pop",
+    "k-pop",
+    "hip hop",
+    "rap",
+    "rock",
+    "metal",
+    "edm",
+    "dance"
+  ]);
+  const keyGenres = genres.filter((genre) => keyGenreSet.has(normalizeGenre(genre)));
+  const isKeyGenre = (genre) => keyGenreSet.has(normalizeGenre(genre));
+
   g.append("g")
     .attr("transform", `translate(0,${gridH + 25})`) // Move x-axis ticks further down
     .call(d3.axisBottom(x))
@@ -1452,15 +1493,29 @@ function drawGenreHeatmap(story) {
     .attr("transform", "rotate(-25)")
     .style("text-anchor", "end")
     .style("fill", "#444")
-    .style("font-size", "13px")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
     .style("font-weight", "600");
 
-  g.append("g")
-    .call(d3.axisLeft(y))
-    .selectAll("text")
-    .style("fill", "#444")
-    .style("font-size", "13px")
-    .style("font-weight", "600");
+  const yAxis = g.append("g")
+    .call(d3.axisLeft(y));
+
+  yAxis.selectAll("text")
+    .style("fill", (d) => (isKeyGenre(d) ? "#111" : "#444"))
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
+    .style("font-weight", (d) => (isKeyGenre(d) ? "800" : "600"));
+
+  if (keyGenres.length) {
+    yAxis.selectAll("circle.key-genre-dot")
+      .data(keyGenres)
+      .enter()
+      .append("circle")
+      .attr("class", "key-genre-dot")
+      .attr("cx", -10)
+      .attr("cy", (d) => y(d) + y.bandwidth() / 2)
+      .attr("r", 3)
+      .attr("fill", "#111")
+      .attr("opacity", 0.7);
+  }
 
   const cells = g
     .selectAll("rect.cell")
@@ -1531,7 +1586,7 @@ function drawGenreHeatmap(story) {
     .attr("y", gridH + 105) // Moved further down
     .style("fill", "#444")
     .style("font-weight", "700")
-    .style("font-size", "14px")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Audio Feature");
 
   // Legend - positioned BELOW the x-axis label, moved further down
@@ -1571,7 +1626,7 @@ function drawGenreHeatmap(story) {
   g.append("text")
     .attr("x", legendX)
     .attr("y", legendY - 6)
-    .attr("font-size", "11px")
+    .attr("font-size", `${LEGEND_LABEL_SIZE}px`)
     .attr("fill", "#555")
     .style("font-weight", "600")
     .text("Lower than avg");
@@ -1580,7 +1635,7 @@ function drawGenreHeatmap(story) {
     .attr("x", legendX + legendW / 2)
     .attr("y", legendY - 6)
     .attr("text-anchor", "middle")
-    .attr("font-size", "11px")
+    .attr("font-size", `${LEGEND_LABEL_SIZE}px`)
     .attr("fill", "#555")
     .style("font-weight", "600")
     .text("0");
@@ -1589,7 +1644,7 @@ function drawGenreHeatmap(story) {
     .attr("x", legendX + legendW)
     .attr("y", legendY - 6)
     .attr("text-anchor", "end")
-    .attr("font-size", "11px")
+    .attr("font-size", `${LEGEND_LABEL_SIZE}px`)
     .attr("fill", "#555")
     .style("font-weight", "600")
     .text("Higher than avg");
@@ -1601,7 +1656,7 @@ function drawGenreHeatmap(story) {
     .attr("y", -42)
     .style("fill", "#444")
     .style("font-weight", "600")
-    .style("font-size", "12px")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Genre");
 }
 
@@ -1674,9 +1729,14 @@ function drawGenrePopularity(story) {
     .attr("transform", `translate(0,${h})`)
     .call(d3.axisBottom(x).ticks(5).tickFormat(opt.tickFormat))
     .selectAll("text")
-    .style("fill", "#444");
+    .style("fill", "#444")
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
 
-  g.append("g").call(d3.axisLeft(y)).selectAll("text").style("fill", "#444");
+  g.append("g")
+    .call(d3.axisLeft(y))
+    .selectAll("text")
+    .style("fill", "#444")
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
 
   // Axis labels
   g.append("text")
@@ -1685,6 +1745,7 @@ function drawGenrePopularity(story) {
     .attr("y", h + 50)
     .style("fill", "#444")
     .style("font-weight", "600")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text(opt.label);
 
   g.append("text")
@@ -1694,7 +1755,24 @@ function drawGenrePopularity(story) {
     .attr("y", -50)
     .style("fill", "#444")
     .style("font-weight", "600")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Genre");
+
+  // Tie genre popularity to hit likelihood (visual cue)
+  const linkText = opt.key === "hit_share"
+    ? "Higher hit share = more likely to produce hits"
+    : opt.key === "avg_popularity"
+      ? "Higher average popularity often aligns with higher hit likelihood"
+      : "Popularity can signal how often a genre breaks into hits";
+
+  g.append("text")
+    .attr("x", w)
+    .attr("y", -4)
+    .attr("text-anchor", "end")
+    .style("fill", "#666")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
+    .style("font-weight", "600")
+    .text(linkText);
 
   const bars = g
     .selectAll("rect")
@@ -1803,7 +1881,11 @@ function drawBlueprintDeltas(story) {
   const x = d3.scaleLinear().domain([min, max]).nice().range([0, w]);
   const y = d3.scaleBand().domain(rows.map((r) => r.feature)).range([0, h]).padding(0.25);
 
-  g.append("g").call(d3.axisLeft(y)).selectAll("text").style("fill", "#444");
+  g.append("g")
+    .call(d3.axisLeft(y))
+    .selectAll("text")
+    .style("fill", "#444")
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
 
   // Axis labels
   g.append("text")
@@ -1812,6 +1894,7 @@ function drawBlueprintDeltas(story) {
     .attr("y", h + 50)
     .style("fill", "#444")
     .style("font-weight", "600")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Delta (Hit - Overall)");
 
   g.append("text")
@@ -1821,6 +1904,7 @@ function drawBlueprintDeltas(story) {
     .attr("y", -50)
     .style("fill", "#444")
     .style("font-weight", "600")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
     .text("Audio Feature");
 
   g.append("line")
@@ -1861,6 +1945,253 @@ function drawBlueprintDeltas(story) {
       );
     })
     .on("mouseleave", hideTip);
+}
+
+/* ---------- STEP 8.1: FEATURE VARIANCE (Hits vs Non-hits) ---------- */
+function loadFeatureVariance(story) {
+  if (__varianceCache) return Promise.resolve(__varianceCache);
+  if (__variancePromise) return __variancePromise;
+
+  const threshold =
+    story?.hit_threshold ??
+    story?.popularity_spectrum?.hit_threshold_top10 ??
+    story?.hit_blueprint?.hit_threshold_top10 ??
+    63;
+
+  const features = [
+    "danceability",
+    "energy",
+    "valence",
+    "acousticness",
+    "instrumentalness",
+    "speechiness",
+    "loudness",
+    "tempo",
+    "duration_min",
+    "liveness"
+  ];
+
+  __variancePromise = d3.csv("data/raw/spotify_tracks.csv", (d) => ({
+    popularity: Number(d.popularity),
+    danceability: Number(d.danceability),
+    energy: Number(d.energy),
+    valence: Number(d.valence),
+    acousticness: Number(d.acousticness),
+    instrumentalness: Number(d.instrumentalness),
+    speechiness: Number(d.speechiness),
+    loudness: Number(d.loudness),
+    tempo: Number(d.tempo),
+    duration_min: Number(d.duration_ms) / 60000,
+    liveness: Number(d.liveness)
+  })).then((rows) => {
+    const totals = {};
+    const totalsSq = {};
+    const counts = {};
+
+    features.forEach((f) => {
+      totals[f] = 0;
+      totalsSq[f] = 0;
+      counts[f] = 0;
+    });
+
+    rows.forEach((r) => {
+      features.forEach((f) => {
+        const v = r[f];
+        if (!Number.isFinite(v)) return;
+        totals[f] += v;
+        totalsSq[f] += v * v;
+        counts[f] += 1;
+      });
+    });
+
+    const means = {};
+    const stds = {};
+    features.forEach((f) => {
+      const n = counts[f] || 1;
+      const mean = totals[f] / n;
+      const variance = Math.max(0, totalsSq[f] / n - mean * mean);
+      means[f] = mean;
+      stds[f] = Math.sqrt(variance) || 1;
+    });
+
+    const hitTotals = {};
+    const hitTotalsSq = {};
+    const hitCounts = {};
+    const nonTotals = {};
+    const nonTotalsSq = {};
+    const nonCounts = {};
+
+    features.forEach((f) => {
+      hitTotals[f] = 0;
+      hitTotalsSq[f] = 0;
+      hitCounts[f] = 0;
+      nonTotals[f] = 0;
+      nonTotalsSq[f] = 0;
+      nonCounts[f] = 0;
+    });
+
+    rows.forEach((r) => {
+      const isHit = Number.isFinite(r.popularity) && r.popularity >= threshold;
+      features.forEach((f) => {
+        const v = r[f];
+        if (!Number.isFinite(v)) return;
+        const z = (v - means[f]) / stds[f];
+        if (isHit) {
+          hitTotals[f] += z;
+          hitTotalsSq[f] += z * z;
+          hitCounts[f] += 1;
+        } else {
+          nonTotals[f] += z;
+          nonTotalsSq[f] += z * z;
+          nonCounts[f] += 1;
+        }
+      });
+    });
+
+    const result = features.map((f) => {
+      const hitN = hitCounts[f] || 1;
+      const nonN = nonCounts[f] || 1;
+      const hitMean = hitTotals[f] / hitN;
+      const nonMean = nonTotals[f] / nonN;
+      const hitVar = Math.max(0, hitTotalsSq[f] / hitN - hitMean * hitMean);
+      const nonVar = Math.max(0, nonTotalsSq[f] / nonN - nonMean * nonMean);
+      return {
+        feature: f,
+        hitStd: Math.sqrt(hitVar),
+        nonStd: Math.sqrt(nonVar)
+      };
+    });
+
+    __varianceCache = { threshold, rows: result };
+    return __varianceCache;
+  });
+
+  return __variancePromise;
+}
+
+function drawFeatureVariance(story) {
+  const { g, w, h } = baseSvg(
+    "Hit consistency vs diversity",
+    "Std dev of z-scored features (hits vs non-hits)"
+  );
+
+  const runId = ++__varianceRunId;
+
+  g.append("text")
+    .attr("class", "variance-loading")
+    .attr("x", w / 2)
+    .attr("y", h / 2)
+    .attr("text-anchor", "middle")
+    .style("fill", "#666")
+    .style("font-weight", 700)
+    .text("Computing feature variance…");
+
+  loadFeatureVariance(story)
+    .then((payload) => {
+      if (runId !== __varianceRunId) return;
+      const data = payload.rows;
+      if (!data || !data.length) {
+        g.selectAll(".variance-loading").text("No variance data available.");
+        return;
+      }
+
+      g.selectAll(".variance-loading").remove();
+
+      const labelMap = {
+        danceability: "Danceability",
+        energy: "Energy",
+        valence: "Valence",
+        acousticness: "Acousticness",
+        instrumentalness: "Instrumentalness",
+        speechiness: "Speechiness",
+        loudness: "Loudness",
+        tempo: "Tempo",
+        duration_min: "Duration",
+        liveness: "Liveness"
+      };
+
+      const features = data.map((d) => d.feature);
+      const x0 = d3.scaleBand().domain(features).range([0, w]).padding(0.2);
+      const x1 = d3.scaleBand().domain(["hits", "nonHits"]).range([0, x0.bandwidth()]).padding(0.18);
+      const maxStd = d3.max(data, (d) => Math.max(d.hitStd, d.nonStd)) || 1;
+      const y = d3.scaleLinear().domain([0, maxStd * 1.15]).range([h, 0]).nice();
+
+      addGridY(g, y, w);
+
+      g.append("g")
+        .attr("transform", `translate(0,${h})`)
+        .call(
+          d3.axisBottom(x0).tickFormat((d) => labelMap[d] || d)
+        )
+        .selectAll("text")
+        .attr("transform", "rotate(-28)")
+        .style("text-anchor", "end")
+        .style("fill", "#444")
+        .style("font-size", `${AXIS_TICK_SIZE}px`);
+
+      g.append("g")
+        .call(d3.axisLeft(y).ticks(5))
+        .selectAll("text")
+        .style("fill", "#444")
+        .style("font-size", `${AXIS_TICK_SIZE}px`);
+
+      const group = g
+        .selectAll("g.variance-group")
+        .data(data)
+        .enter()
+        .append("g")
+        .attr("class", "variance-group")
+        .attr("transform", (d) => `translate(${x0(d.feature)},0)`);
+
+      group.append("rect")
+        .attr("x", x1("hits"))
+        .attr("y", (d) => y(d.hitStd))
+        .attr("width", x1.bandwidth())
+        .attr("height", (d) => h - y(d.hitStd))
+        .attr("rx", 6)
+        .attr("fill", "#111");
+
+      group.append("rect")
+        .attr("x", x1("nonHits"))
+        .attr("y", (d) => y(d.nonStd))
+        .attr("width", x1.bandwidth())
+        .attr("height", (d) => h - y(d.nonStd))
+        .attr("rx", 6)
+        .attr("fill", "#777");
+
+      const legend = g.append("g").attr("transform", `translate(${w - 180},${-6})`);
+      legend.append("rect").attr("x", 0).attr("y", 0).attr("width", 12).attr("height", 12).attr("rx", 3).attr("fill", "#111");
+      legend.append("text")
+        .attr("x", 18)
+        .attr("y", 10)
+        .style("font-size", `${AXIS_TICK_SIZE}px`)
+        .style("fill", "#444")
+        .text("Hits");
+
+      legend.append("rect").attr("x", 90).attr("y", 0).attr("width", 12).attr("height", 12).attr("rx", 3).attr("fill", "#777");
+      legend.append("text")
+        .attr("x", 108)
+        .attr("y", 10)
+        .style("font-size", `${AXIS_TICK_SIZE}px`)
+        .style("fill", "#444")
+        .text("Non-hits");
+
+      const avgHit = d3.mean(data, (d) => d.hitStd) || 0;
+      const avgNon = d3.mean(data, (d) => d.nonStd) || 0;
+      const homogeneity = avgHit < avgNon ? "more homogeneous" : "more diverse";
+
+      g.append("text")
+        .attr("x", 0)
+        .attr("y", h + 60)
+        .style("fill", "#444")
+        .style("font-size", `${AXIS_LABEL_SIZE}px`)
+        .style("font-weight", "600")
+        .text(`On average, hits are ${homogeneity} than non-hits across these features.`);
+    })
+    .catch(() => {
+      if (runId !== __varianceRunId) return;
+      g.selectAll(".variance-loading").text("Could not load variance data.");
+    });
 }
 
 /* ---------- STEP 9: TAKEAWAY ---------- */
@@ -1920,52 +2251,7 @@ function drawTakeaway(story) {
     .style("font-size", "12px")
     .text("Ratios > 1 mean the genre appears among hits more often than expected from its overall share.");
 
-  // Add explicit analysis bar chart as a panel
-  const p3 = panel("Explicit content analysis");
-  const explicitData = [
-    { label: "Explicit", value: story.takeaway.explicit_analysis.explicit_mean_pop },
-    { label: "Non-Explicit", value: story.takeaway.explicit_analysis.non_explicit_mean_pop }
-  ];
-  const maxVal = d3.max(explicitData, d => d.value);
-  explicitData.forEach((d, i) => {
-    const barContainer = p3.append("div")
-      .style("display", "flex")
-      .style("align-items", "center")
-      .style("margin-bottom", "8px");
-    barContainer.append("span")
-      .style("width", "120px")
-      .style("font-weight", "700")
-      .text(d.label);
-    const bar = barContainer.append("div")
-      .style("flex", "1")
-      .style("height", "20px")
-      .style("background", d.label === "Explicit" ? "#111" : "#777")
-      .style("border-radius", "4px")
-      .style("position", "relative");
-    bar.append("div")
-      .style("position", "absolute")
-      .style("right", "8px")
-      .style("top", "0")
-      .style("color", "white")
-      .style("font-weight", "800")
-      .style("font-size", "12px")
-      .text(d.value.toFixed(1));
-    bar.style("width", `${(d.value / maxVal) * 100}%`);
-  });
-  p3.append("div")
-    .style("font-size", "12px")
-    .style("color", "#666")
-    .text("Popularity scores (higher is better)");
-
-  // Correlation text/callout
-  const corr = story.takeaway.duration_pop_correlation;
-  wrap.append("div")
-    .style("font-size", "14px")
-    .style("margin-top", "16px")
-    .html(`
-      <strong>Takeaway insight:</strong><br/>
-      Duration and popularity have a correlation of <strong>${corr.toFixed(2)}</strong> (shorter songs tend to be ${corr > 0 ? 'more' : 'less'} popular).
-    `);
+  // Keep takeaway focused on the core synthesis panels only
 }
 
 /* ---------- Router ---------- */
@@ -1981,7 +2267,8 @@ export function renderStep(stepId, story) {
   if (stepId === 6) return drawGenreHeatmap(story);
   if (stepId === 7) return drawGenrePopularity(story);
   if (stepId === 8) return drawBlueprintDeltas(story);
-  if (stepId === 9) return drawTakeaway(story);
+  if (stepId === 9) return drawFeatureVariance(story);
+  if (stepId === 10) return drawTakeaway(story);
 
   d3.select("#chart").append("p").text("Unknown step: " + stepId);
 }
