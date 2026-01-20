@@ -53,114 +53,114 @@
   <section id="scrolly">
     <article class="steps">
       <div class="step" data-step="0">
-        <h2>1) What makes a hit?</h2>
-        <p class="step-question">What are we actually looking at when we talk about “hits” in this dataset?</p>
-        <p>Start with context: what’s in the dataset, and what do the “top” tracks look like?</p>
-        <p class="step-transition">To see how exceptional hits really are, we first need to look at the full popularity spectrum.</p>
+        <h2>Cold Open</h2>
+        <p class="step-question">What does success look like in the age of streaming?</p>
+        <p>Three songs. Three different realities. Let's start by meeting them — before diving into the patterns that separate virality from obscurity.</p>
+        <p class="step-transition">These examples show the range — now let's zoom out to see the full dataset.</p>
       </div>
 
       <div class="step" data-step="1">
-        <h2>2) The popularity spectrum</h2>
-        <p class="step-question">How rare are hit songs compared with the long tail of releases?</p>
-        <p>Popularity is not evenly distributed — most tracks live in the long tail.</p>
-        <p class="step-transition">Now that we’ve seen the long tail, we need a simple rule to define what counts as “hit” for the rest of the story.</p>
+        <h2>The Pattern Revealed</h2>
+        <p class="step-question">What separates a hit from everything else?</p>
+        <p>Here's the answer in numbers: hits are <strong>far less instrumental</strong> (-0.11), <strong>noticeably louder</strong> (+1.19 dB), and <strong>more danceable</strong> (+0.04). Small differences, massive impact. <em>(Here, "hit" means the top 10% by Spotify popularity.)</em></p>
+        <div class="data-answer">
+          <strong>First insight:</strong> Instrumentalness shows the strongest separation (Cohen's d = -0.36), followed by loudness and danceability. These are the primary differentiators.
+        </div>
+        <p class="step-transition">Now that you've seen the key separators, let's understand the full dataset and how we define success.</p>
       </div>
 
       <div class="step" data-step="2">
-        <h2>2.1) Defining “hit”</h2>
-        <p class="step-question">Where do we draw the line between a solid track and a true hit?</p>
-        <p>We define hits as the top 10% by popularity (threshold shown below) + the key quantiles.</p>
-        <p class="step-transition">With the gate set, we can compare hits vs non-hits feature by feature.</p>
+        <h2>1) What makes a hit?</h2>
+        <p class="step-question">What are we actually looking at when we talk about "hits" in this dataset?</p>
+        <p>Start with context: what's in the dataset, and what do the "top" tracks look like?</p>
+        <p class="step-transition">To see how exceptional hits really are, we first need to look at the full popularity spectrum.</p>
       </div>
 
-      <section class="chapter-break">
-        <h2>From scarcity to sound</h2>
-        <p>Now that we know how rare hits are, we can finally ask what they sound like.</p>
-      </section>
-
       <div class="step" data-step="3">
-        <h2>3) Feature-by-feature anatomy</h2>
-        <p class="step-question">Which audio features most strongly distinguish hits from non-hits?</p>
-        <p>Which audio features best separate high vs low popularity tracks?</p>
-        <div class="data-answer">
-          <strong>Answering the data question:</strong> What are the most important audio features for predicting hit songs? Instrumentalness stands out with the strongest effect (Cohen's d = -0.36), showing hits are far less instrumental than low-popularity tracks. Loudness (d = 0.21) and danceability (d = 0.22) also play key roles, suggesting hits are louder and more danceable to capture attention in a crowded market.
-        </div>
-        <p class="step-transition">Those are overall gaps — next we trace how the same features change across the popularity ladder.</p>
+        <h2>2) The popularity spectrum</h2>
+        <p class="step-question">How rare are hit songs compared with the long tail of releases?</p>
+        <p>Popularity is not evenly distributed — most tracks live in the long tail.</p>
+        <p class="step-transition">Now that we’ve seen the long tail, we can compare hits vs non-hits feature by feature.</p>
       </div>
 
       <div class="step" data-step="4">
-        <h2>3.1) The “sound” profile</h2>
-        <p class="step-question">How do mood and energy evolve as songs get more popular?</p>
-        <p>How do danceability, energy, and valence change across the popularity spectrum?</p>
-        <p class="step-transition">Sound alone isn’t enough; structure in tempo and length also shapes how tracks perform.</p>
+        <h2>3) Audio anatomy: What separates hits?</h2>
+        <p class="step-question">Can we identify the sonic signature of a modern hit?</p>
+        <p>Three features dominate: hits are <strong>less instrumental</strong> (strongest effect), <strong>louder</strong>, and <strong>more danceable</strong>. The gaps aren't massive, but they're consistent.</p>
+        <div class="data-answer">
+          <strong>The anatomy:</strong> Instrumentalness (Cohen's d = -0.36), loudness (d = 0.21), danceability (d = 0.22). These shifts capture attention in a crowded market.
+        </div>
+        <p class="step-transition">Those are overall gaps — next we trace how features change across the popularity ladder.</p>
       </div>
 
       <div class="step" data-step="5">
-        <h2>3.2) The “structure” profile</h2>
-        <p class="step-question">Are hits simply faster and shorter, or is the pattern more nuanced?</p>
-        <p>Tempo and duration: are hits faster, shorter, or just different?</p>
-        <p class="step-transition">Features describe songs, but genres describe context — let’s see if genre identity still shows up in the audio DNA.</p>
+        <h2>3.1) The "sound" profile</h2>
+        <p class="step-question">How do mood and energy evolve as songs get more popular?</p>
+        <p>How do danceability, energy, and valence change across the popularity spectrum?</p>
+        <p class="step-transition">Sound alone isn't enough; structure in tempo and length also shapes how tracks perform.</p>
       </div>
 
-      <section class="chapter-break">
-        <h2>From sound to genre</h2>
-        <p>If features explain the “what,” genres explain the context that shapes those sounds.</p>
-      </section>
-
       <div class="step" data-step="6">
-        <h2>4) Genre fingerprints</h2>
-        <p class="step-question">Do genres still have unique sonic fingerprints in the streaming era?</p>
-        <p>Do genres still sound different? A fingerprint view using z-scores per feature.</p>
+        <h2>3.2) The "structure" profile</h2>
+        <p class="step-question">Do shorter songs outperform longer ones in the streaming era?</p>
+        <p>Duration is the headline: hits skew a bit shorter — but it's not a hard rule. Tempo is secondary context, not the main lever.</p>
+        <p class="step-transition">Beyond structure, there's one more ingredient: language. Does profanity help or hurt?</p>
+      </div>
+
+      <div class="step" data-step="7">
+        <h2>3.3) The power of profanity</h2>
+        <p class="step-question">Is explicit content a barrier or a magnet for popularity?</p>
+        <p>Explicit tracks (here, "hit" means top 10% by popularity) significantly outperform clean ones — both in average popularity and hit rate. The gap is clear: profanity is a magnet, not a barrier.</p>
         <div class="data-answer">
-          <strong>How to read this:</strong> Each cell shows how far a genre is above (red) or below (blue) the average for that feature. Darker color = stronger difference. Highlighted rows point to key genres for quick orientation.
+          <strong>The verdict:</strong> Explicit tracks have a 16.9% hit rate vs 9.5% for non-explicit — nearly 80% higher. Average popularity is also 4.5 points higher (38.4 vs 33.9). This doesn't mean all hits swear, but it shows explicit content correlates with streaming success.
+        </div>
+        <p class="step-transition">Structure and language covered — now let's see if genre identity still shows up in the audio DNA.</p>
+      </div>
+
+      <div class="step" data-step="8">
+        <h2>4) Genre fingerprints</h2>
+        <p class="step-question">Are genres converging into a single "streaming sound," or do they retain distinct identities?</p>
+        <p>We analyze 5 representative genres to see if their sonic fingerprints overlap or diverge. Each cell shows how far a genre deviates from the global average for a given feature.</p>
+        <div class="data-answer">
+          <strong>How to read this:</strong> Bright, bordered cells = strong distinctiveness. Faded cells = convergence toward the average. Red = above average, Blue = below average. The verdict appears below the chart.
         </div>
         <p class="step-transition">If genres differ sonically, do they also differ in hit success?</p>
       </div>
 
-      <div class="step" data-step="7">
+      <div class="step" data-step="9">
         <h2>4.1) Genres & popularity</h2>
         <p class="step-question">Which genres overperform when it comes to producing hits?</p>
         <p>Which genres have higher average popularity (within the top genres by count)?</p>
         <div class="data-answer">
           <strong>Answering the data question:</strong> How does popularity vary across different genres? Pop leads with an overrepresentation ratio of 6.4 in hits, followed by k-pop (4.4) and metal (4.2). This means these genres punch above their weight in the charts, while acoustic or blues tracks appear far less often among top hits than their share in the dataset would suggest.
         </div>
-        <p class="step-transition">After genre winners, we can merge everything into a single “average hit” profile.</p>
+        <p class="step-transition">After genre winners, we can merge everything into a single "average hit" profile.</p>
       </div>
 
-      <section class="chapter-break">
-        <h2>From genres to blueprint</h2>
-        <p>We’ve mapped the context — now we combine signals into one hit profile.</p>
-      </section>
-
-      <div class="step" data-step="8">
-        <h2>5) The hit blueprint</h2>
-        <p class="step-question">What does the average hit look like when we merge all features into one profile?</p>
-        <p>What does the “average hit” look like compared to the overall average?</p>
+      <div class="step" data-step="10">
+        <h2>5) Anatomy explained</h2>
+        <p class="step-question">Can we describe the anatomy of a modern hit?</p>
+        <p>Yes—with numbers. Here's the full breakdown: what the pattern revealed in Step 1, now explained with exact deltas and real hit songs plotted as examples.</p>
         <div class="data-answer">
-          <strong>Building on the features:</strong> The hit blueprint reinforces which traits matter most. Hits differ notably in instrumentalness (-0.11 delta, less instrumental), loudness (+1.19, louder), and danceability (+0.04, more danceable). These aren't huge shifts, but in the scale of streaming, they can make the difference between obscurity and virality.
+          <strong>The blueprint:</strong> Less instrumental (-0.11), louder (+1.19 dB), more danceable (+0.04). Sample songs show how hits match or deviate from this average. Descriptive, not causal.
         </div>
         <p class="step-transition">But is success about convergence? Next we compare how consistent hits are versus the rest.</p>
       </div>
 
-      <div class="step" data-step="9">
+      <div class="step" data-step="11">
         <h2>5.1) Hit consistency vs diversity</h2>
         <p class="step-question">Do hits cluster around a narrow sound — or stay diverse?</p>
         <p>We compare feature variance in hits vs non-hits to see whether success correlates with homogeneity.</p>
-        <p class="step-transition">And that profile doesn’t just describe songs — it reflects how platforms and culture shape what rises.</p>
+        <p class="step-transition">And that profile doesn't just describe songs — it reflects how platforms and culture shape what rises.</p>
       </div>
 
-      <section class="chapter-break">
-        <h2>From patterns to meaning</h2>
-        <p>Once the mechanics are clear, the cultural stakes come into view.</p>
-      </section>
-
-      <div class="step" data-step="10">
+      <div class="step" data-step="12">
         <h2>6) Why it matters: takeaway</h2>
         <p class="step-question">So what does this anatomy of a hit tell us about the culture of streaming?</p>
         <p>
           The headline is clear: hits cluster around a few audio traits (louder, more danceable, less instrumental),
           while tempo and length are far less decisive. Genres also carry distinct fingerprints and some consistently
-          overperform in the hit zone. This isn’t just sound science — it reflects how recommendation systems and
+          overperform in the hit zone. This isn't just sound science — it reflects how recommendation systems and
           platform incentives shape what rises. The tradeoff is real: optimizing for algorithmic signals can
           boost visibility, but it can also narrow diversity and flatten cultural variety.
         </p>
@@ -182,12 +182,123 @@
 </figure>
 
   </section>
-
-  <section class="outro">
-    <h2>Limitations</h2>
-    <p>Popularity is a platform metric. This is correlation-driven storytelling, not causality.</p>
-  </section>
 </main>
+
+<footer class="methodology-section">
+  <details class="methodology-details">
+    <summary class="methodology-summary">
+      <span class="methodology-title">Methodology & Data</span>
+      <span class="methodology-icon">▼</span>
+    </summary>
+    
+    <div class="methodology-content">
+      <div class="methodology-grid">
+        
+        <div class="methodology-item">
+          <h3>Dataset Source</h3>
+          <p>
+            We analyzed <strong>114,000 tracks</strong> from the 
+            <a href="https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset" target="_blank" rel="noopener">
+              Spotify Tracks Dataset (Kaggle)
+            </a>, spanning nearly 30,000 artists across 114 genres. The dataset includes Spotify's proprietary 
+            audio features (danceability, energy, valence, etc.) extracted via the Spotify Web API.
+          </p>
+          <p class="methodology-note">
+            <strong>Timeframe:</strong> Dataset compiled in 2023. Track popularity reflects streaming data at that snapshot.
+          </p>
+        </div>
+
+        <div class="methodology-item">
+          <h3>Hit Definition</h3>
+          <p>
+            We define "hits" as tracks in the <strong>top 10% by popularity score</strong> (popularity ≥ 90th percentile). 
+            This threshold is arbitrary but provides a consistent lens to compare high-performing tracks against 
+            the broader catalog.
+          </p>
+          <p class="methodology-note">
+            <strong>Threshold:</strong> Popularity score ≥ ~67 (varies slightly after deduplication).
+          </p>
+          <div id="hit-definition-appendix" class="appendix-chart" aria-label="Hit definition chart"></div>
+        </div>
+
+        <div class="methodology-item">
+          <h3>Audio Features</h3>
+          <ul class="feature-list">
+            <li><strong>Danceability:</strong> How suitable a track is for dancing (0.0–1.0)</li>
+            <li><strong>Energy:</strong> Perceptual intensity and activity (0.0–1.0)</li>
+            <li><strong>Valence:</strong> Musical positiveness/happiness (0.0–1.0)</li>
+            <li><strong>Loudness:</strong> Overall volume in decibels (dB)</li>
+            <li><strong>Acousticness:</strong> Likelihood of being acoustic (0.0–1.0)</li>
+            <li><strong>Instrumentalness:</strong> Predicts lack of vocals (0.0–1.0)</li>
+            <li><strong>Speechiness:</strong> Presence of spoken words (0.0–1.0)</li>
+            <li><strong>Liveness:</strong> Probability of live audience (0.0–1.0)</li>
+            <li><strong>Tempo:</strong> Beats per minute (BPM)</li>
+            <li><strong>Duration:</strong> Track length in minutes</li>
+          </ul>
+          <p class="methodology-note">
+            Features are computed by Spotify's audio analysis algorithms. See 
+            <a href="https://developer.spotify.com/documentation/web-api/reference/get-audio-features" target="_blank" rel="noopener">
+              Spotify API Docs
+            </a> for technical details.
+          </p>
+        </div>
+
+        <div class="methodology-item">
+          <h3>Statistical Methods</h3>
+          <p>
+            <strong>Effect sizes:</strong> We use Cohen's d to measure standardized differences between 
+            hit and non-hit groups. Values around 0.2 are considered small, 0.5 medium, 0.8 large.
+          </p>
+          <p>
+            <strong>Z-scores:</strong> Genre fingerprints show how many standard deviations each genre 
+            deviates from the global mean for each feature.
+          </p>
+          <p>
+            <strong>Normalization:</strong> Some features (tempo, duration) are min-max normalized to 
+            [0, 1] for visualization comparability.
+          </p>
+        </div>
+
+        <div class="methodology-item">
+          <h3>Limitations</h3>
+          <ul class="limitation-list">
+            <li><strong>Correlation, not causation:</strong> Patterns show associations, not guarantees. 
+            High danceability doesn't <em>cause</em> success—it correlates with it.</li>
+            
+            <li><strong>Platform bias:</strong> Popularity reflects Spotify's recommendation algorithms, 
+            user demographics, and playlist curation—not universal musical quality.</li>
+            
+            <li><strong>Survivor bias:</strong> The dataset includes tracks already on Spotify. Unreleased, 
+            rejected, or never-uploaded music isn't represented.</li>
+            
+            <li><strong>Genre ambiguity:</strong> Genre labels are crowd-sourced and inconsistent. 
+            A track tagged "pop" might also fit "dance" or "indie."</li>
+            
+            <li><strong>Temporal snapshot:</strong> Popularity changes over time. A "hit" in 2023 might 
+            fade by 2026, or a sleeper track might suddenly trend.</li>
+            
+            <li><strong>Simplification:</strong> Reducing music to 10 numerical features omits lyrics, 
+            cultural context, marketing, artist fame, and countless intangibles.</li>
+          </ul>
+        </div>
+
+        <div class="methodology-item">
+          <h3>Interpretation</h3>
+          <p>
+            This analysis is <strong>descriptive, not prescriptive</strong>. The "hit blueprint" maps 
+            where streaming success has been—not where it must go. Artists can use these insights as 
+            guideposts, not rules. Listeners can recognize algorithmic patterns while seeking diversity.
+          </p>
+          <p class="methodology-quote">
+            "The algorithm is powerful, but the choice is still ours."
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </details>
+</footer>
+
 
 <script src="https://unpkg.com/d3@7"></script>
 <script src="https://unpkg.com/scrollama"></script>

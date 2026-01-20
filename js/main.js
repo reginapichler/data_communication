@@ -1,4 +1,4 @@
-import { renderStep } from "./charts.js";
+import { renderStep, renderHitDefinitionAppendix } from "./charts.js";
 
 let __renderRaf = null;
 
@@ -28,8 +28,8 @@ function updateHitGateMotif(stepId, story) {
 
   const hit = getHitGate(story);
 
-  // show only from step 1 (Defining hit) onwards
-  if (hit == null || stepId < 1) {
+  // show only from step 3 (popularity spectrum) onwards
+  if (hit == null || stepId < 3) {
     el.style.display = "none";
     return;
   }
@@ -47,83 +47,95 @@ function updateHitGateMotif(stepId, story) {
 const COPY = {
   producer: {
     titles: [
+      "The Opening Act",
+      "The Pattern Revealed",
       "Cracking the Hit Code",
-      "Hit Threshold",
       "The Popularity Reality",
       "Audio Breakdown",
       "Vibe Tuning",
       "Structure Secrets",
+      "The Profanity Factor",
       "Genre Blueprints",
       "Genre Winners",
-      "Hit Checklist",
+      "Anatomy Explained",
       "Consistency Test",
       "Action Plan"
     ],
     bodies: [
+      "Three songs. Three different worlds. Before we chase patterns and blueprints, let's meet the spectrum: a viral smash, a steady performer, and a buried gem.",
+      "Less instrumental, louder, more danceable. These are the key separators. The numbers are small, but the impact is decisive.",
       "As a producer, you're chasing that elusive hit. Let's scan the data for clues in features and genres.",
-      "Hits = top 10% popularity. Use this gate to benchmark your tracks consistently.",
       "Popularity follows a power law – most tracks flop, so aim for the tail, not the middle.",
-      "Which features separate winners from the pack? Let's isolate the key differentiators.",
+      "Three features dominate: less instrumental, louder, more danceable. These are your leverage points.",
       "Dial in the vibe: Danceability, energy, valence shift as tracks climb the charts.",
-      "Structure matters: Tempo, duration, loudness – tune for modern listening habits.",
-      "Genres have their own audio signatures. Match or tweak to stand out.",
+      "Do shorter songs outperform longer ones in the streaming era? A little. Hits skew slightly shorter on average — but it's not a rulebook. Treat duration as a small lever; tempo is weaker context.",
+      "Explicit tracks have 80% higher hit rates than clean ones (16.9% vs 9.5%). Profanity correlates with streaming success.",
+      "Are genres converging? Check 5 representative genres to see if the \"streaming sound\" is real or myth.",
       "Some genres crush it in popularity and hits. Learn from their overperformance.",
-      "The average hit profile: A practical delta from the norm for your next session.",
+      "Now the full breakdown: exact deltas, all features, sample songs. What Step 1 revealed, now explained in detail.",
       "Are hits more consistent than non-hits? Check how tight the feature spread gets.",
       "Synthesize it: Prioritize features, respect genres, iterate with data in mind."
     ],
     callouts: [
-      "<strong>Producer takeaway:</strong> We’ll define a clear hit threshold, then isolate the few features that most separate hits.",
-      "<strong>Producer takeaway:</strong> Your “hit” rule is popularity ≥ p90 (top 10%). Simple and reusable.",
-      "<strong>Producer takeaway:</strong> Don’t compare to the median — compare to the top tail (what you’re trying to reach).",
-      "<strong>Producer takeaway:</strong> Focus on the 2–3 strongest separators, not 20 features at once.",
-      "<strong>Producer takeaway:</strong> Treat this as a “vibe target” you can A/B test (energy + danceability + valence).",
-      "<strong>Producer takeaway:</strong> Structure changes are often smaller, but can still be consistent at scale.",
-      "<strong>Producer takeaway:</strong> Tune toward your genre’s fingerprint, not the global average.",
+      "<strong>First impression:</strong> See how audio features shift across the popularity ladder – from chart-toppers to the long tail.",
+      "<strong>Key insight:</strong> Instrumentalness (-0.11), loudness (+1.19 dB), danceability (+0.04). These are your primary levers.",
+      "<strong>Producer takeaway:</strong> We'll define a clear hit threshold, then isolate the few features that most separate hits.",
+      "<strong>Producer takeaway:</strong> Don't compare to the median — compare to the top tail (what you're trying to reach).",
+      "<strong>Producer takeaway:</strong> Three levers: instrumentalness, loudness, danceability. Start here, not with 20 features.",
+      "<strong>Producer takeaway:</strong> Treat this as a \"vibe target\" you can A/B test (energy + danceability + valence).",
+      "<strong>Producer takeaway:</strong> Duration is the clearer \\\"TikTok brain\\\" signal — but it's incremental, not decisive. Tempo matters less than people think.",
+      "<strong>Producer takeaway:</strong> Don't fear explicit content – data shows it helps, not hurts. But brand and audience matter too.",
+      "<strong>Producer takeaway:</strong> If genres are distinct, honor that. If converging, lean into the universal patterns.",
       "<strong>Producer takeaway:</strong> Use the toggle (Popularity / Explicit / Hit share) to pick your reference targets.",
-      "<strong>Producer takeaway:</strong> Blueprint = targeting. It’s descriptive, not causal — use it to guide iteration.",
-      "<strong>Producer takeaway:</strong> Consistency can signal a market “sound” — diversity can be a differentiator.",
+      "<strong>Producer takeaway:</strong> Full anatomy revealed: all features, precise values, contextual songs. Descriptive, not prescriptive.",
+      "<strong>Producer takeaway:</strong> Consistency can signal a market \"sound\" — diversity can be a differentiator.",
       "<strong>Producer takeaway:</strong> Pick a genre target → tune the top separators → then refine structure."
     ]
   },
 
   culture: {
     titles: [
+      "The Opening Act",
+      "The Pattern Revealed",
       "The Mystery of a Hit",
-      "Setting the Bar",
       "The Uneven Spotlight",
       "Dissecting the Sound",
       "The Vibe Shift",
       "Myths of Structure",
+      "Language & Taboo",
       "Genre DNA",
       "Chart Conquerors",
-      "The Hit Formula?",
+      "The Full Blueprint",
       "Homogeneity vs Diversity",
       "What It All Means"
     ],
     bodies: [
+      "Three songs. Three different realities. One climbed to the top. One lives in the middle. One never broke through. What separates them?",
+      "The pattern is clear: hits are less instrumental, louder, more danceable. The numbers reveal a sonic signature that defines modern success.",
       "Imagine scrolling through Spotify, wondering: What turns a song into a global sensation? Let's dive into the data and uncover the hidden patterns behind today's hits.",
-      "To make sense of it, we draw a line: Hits are the top 10% by popularity. It's arbitrary, but it gives us a clear lens to compare apples to apples.",
       "Popularity isn't fair. Most tracks fade into obscurity, while a lucky few capture the world's ears. This long tail reveals the brutal reality of streaming culture.",
-      "Do hits sound different? Let's break down the audio features one by one, seeing which traits separate the chart-toppers from the rest.",
+      "Yes, hits sound different. Three traits cluster: less instrumental, louder, more danceable. The sonic signature is real.",
       "As popularity rises, the music's vibe evolves. Danceability climbs, energy surges, valence dances – reflecting the moods that hook listeners.",
-      "What about the basics? Are hits shorter, louder, faster? The data whispers truths about how we consume music in the age of short attention spans.",
-      "Genres aren't just labels – they have sonic fingerprints. Z-scores reveal where they align with the crowd or stand apart in their uniqueness.",
+      "Do shorter songs outperform longer ones? Slightly — hits lean shorter, but there's no magic cutoff. Tempo is even less decisive than the mythology suggests.",
+      "Profanity isn't a barrier — it's a magnet. Explicit tracks dominate: 16.9% hit rate vs 9.5% for clean tracks. Cultural norms and algorithms intertwine.",
+      "The \"Pop Singularity\" question: are genres converging into one streaming sound? We compare 5 distinct genres to see if sonic identities survive or blur.",
       "Some genres dominate the charts far beyond their numbers. Pop and k-pop reign supreme, while others struggle to break through the algorithm's gate.",
-      "Picture the average hit: a blueprint of deltas from the norm. Not a recipe, but a map of what tends to work in this wild landscape.",
+      "Now, the full anatomy: exact deltas, all features, real hit songs plotted as context. What Step 1 revealed, now explained with numbers.",
       "Do hits converge on a narrow sound, or stay diverse? Variance shows whether success rewards conformity or variety.",
       "Beyond the charts, what does this say about us? Algorithms amplify trends, culture shapes sound, and in the quest for hits, diversity sometimes gets lost."
     ],
     callouts: [
+      "<strong>Opening scene:</strong> The gulf between success and obscurity starts here. Let's explore what the numbers reveal.",
+      "<strong>The signature:</strong> Less instrumental, louder, more danceable. This is the sonic DNA of streaming success.",
       "<strong>Opening scene:</strong> We're not predicting the future – just mapping the present. Correlation, not causation.",
-      "<strong>Ground rules:</strong> Top 10% popularity as our 'hit' threshold – transparent and repeatable.",
       "<strong>Plot twist:</strong> Streaming funnels attention like a spotlight, leaving most in the dark.",
-      "<strong>Revelation:</strong> Small audio shifts can echo across millions of streams, turning whispers into roars.",
+      "<strong>The signature:</strong> Three traits define hits—less instrumental, louder, more danceable. The pattern is consistent.",
       "<strong>Mood check:</strong> Hits mirror the zeitgeist – danceable energy that matches our fleeting emotions.",
-      "<strong>Reality check:</strong> Structure adapts to our habits: concise, punchy tracks in a distracted world.",
-      "<strong>Identity crisis:</strong> Genres blend and diverge, showing how music evolves while holding onto roots.",
+      "<strong>Reality check:</strong> Shorter helps a bit — but it doesn't guarantee anything. The \\\"TikTok brain\\\" story is real… just not absolute.",
+      "<strong>Cultural signal:</strong> Explicit content isn't censored by the algorithm — it's rewarded. What does that say about streaming culture?",
+      "<strong>Pop Singularity check:</strong> The verdict reveals whether genres retain sonic identities or merge into algorithmic homogeneity.",
       "<strong>Power dynamics:</strong> Genre success mixes art, industry, and the invisible hand of recommendation engines.",
-      "<strong>Cautionary tale:</strong> The 'average hit' is a ghost – inspiring, not prescriptive. Use it as a guide, not a cage.",
+      "<strong>The anatomy explained:</strong> All features, exact deltas, contextual songs. Descriptive, not causal. This is what Step 1 meant.",
       "<strong>Tension point:</strong> If hits cluster tightly, the algorithm rewards sameness; if not, diversity still survives.",
       "<strong>Final reflection:</strong> In chasing hits, we glimpse the soul of modern music: optimized, yet yearning for variety."
     ]
@@ -132,12 +144,14 @@ const COPY = {
 
 // Step groups shown in the rail (upgrade #5)
 const groups = [
-  { label: "The Quest", start: 0, end: 0 },
-  { label: "The Spectrum", start: 1, end: 2 },
-  { label: "The Anatomy", start: 3, end: 5 },
-  { label: "The Genres", start: 6, end: 7 },
-  { label: "The Blueprint", start: 8, end: 9 },
-  { label: "The Meaning", start: 10, end: 10 }
+  { label: "The Opening", start: 0, end: 0 },
+  { label: "The Pattern", start: 1, end: 1 },
+  { label: "The Quest", start: 2, end: 2 },
+  { label: "The Spectrum", start: 3, end: 3 },
+  { label: "The Anatomy", start: 4, end: 7 },
+  { label: "The Genres", start: 8, end: 9 },
+  { label: "The Blueprint", start: 10, end: 11 },
+  { label: "The Meaning", start: 12, end: 12 }
 ];
 
 let currentStep = 0;
@@ -183,6 +197,19 @@ function applyMode(newMode) {
   setActiveDot(currentStep);
   if (dataset) safeRenderStep(currentStep, dataset);
 
+}
+
+// Render appendix visuals on demand (does not affect scrollytelling logic)
+function initAppendix(story) {
+  const details = document.querySelector(".methodology-details");
+  if (!details) return;
+
+  let rendered = false;
+  details.addEventListener("toggle", () => {
+    if (!details.open || rendered) return;
+    renderHitDefinitionAppendix(story, "hit-definition-appendix");
+    rendered = true;
+  });
 }
 
 // Floating label next to the rail (upgrade #1)
@@ -290,6 +317,9 @@ async function init() {
   // Apply initial mode (this also builds rail + callouts)
   applyMode(mode);
 
+  // Appendix visuals (render only when expanded)
+  initAppendix(dataset);
+
   // Initial chart
   safeRenderStep(0, dataset);
   updateHitGateMotif(0, dataset);
@@ -317,28 +347,32 @@ scroller
     if (graphic) graphic.classList.remove("is-active");
   });
 
-chapterScroller
-  .setup({
-    step: ".chapter-break",
-    offset: 0.5
-  })
-  .onStepEnter((resp) => {
-    document.body.classList.add("chapter-break-active");
-    if (resp.element) {
-      resp.element.classList.remove("is-exiting");
-      resp.element.classList.add("is-active");
-    }
-  })
-  .onStepExit((resp) => {
-    document.body.classList.remove("chapter-break-active");
-    if (resp.element) {
-      resp.element.classList.remove("is-active");
-      resp.element.classList.add("is-exiting");
-      setTimeout(() => {
-        resp.element.classList.remove("is-exiting");
-      }, 420);
-    }
-  });
+  // Chapter breaks (optional). If none exist, skip setting up the secondary scroller.
+  const chapterEls = document.querySelectorAll(".chapter-break");
+  if (chapterEls.length) {
+    chapterScroller
+      .setup({
+        step: ".chapter-break",
+        offset: 0.5
+      })
+      .onStepEnter((resp) => {
+        document.body.classList.add("chapter-break-active");
+        if (resp.element) {
+          resp.element.classList.remove("is-exiting");
+          resp.element.classList.add("is-active");
+        }
+      })
+      .onStepExit((resp) => {
+        document.body.classList.remove("chapter-break-active");
+        if (resp.element) {
+          resp.element.classList.remove("is-active");
+          resp.element.classList.add("is-exiting");
+          setTimeout(() => {
+            resp.element.classList.remove("is-exiting");
+          }, 420);
+        }
+      });
+  }
 
   // Mode toggle events
   const bProd = document.getElementById("modeProducer");
@@ -349,19 +383,19 @@ chapterScroller
   // Make scrollama reliable (fixes “only updates after scrolling back up”)
   window.addEventListener("resize", () => {
     scroller.resize();
-    chapterScroller.resize();
+    if (chapterEls.length) chapterScroller.resize();
   });
   requestAnimationFrame(() => {
     scroller.resize();
-    chapterScroller.resize();
+    if (chapterEls.length) chapterScroller.resize();
   });
   setTimeout(() => {
     scroller.resize();
-    chapterScroller.resize();
+    if (chapterEls.length) chapterScroller.resize();
   }, 300);
   setTimeout(() => {
     scroller.resize();
-    chapterScroller.resize();
+    if (chapterEls.length) chapterScroller.resize();
   }, 1200);
 }
 

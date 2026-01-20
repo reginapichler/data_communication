@@ -280,6 +280,137 @@ function addGridY(g, y, w) {
   grid.select("path").remove();
 }
 
+/**
+ * STEP 1: Early Hit Blueprint
+ * Bold, early statement showing what separates hits from the rest
+ * Clean horizontal bar chart with 6-8 key features
+ */
+function renderBlueprintEarly(story) {
+  const deltas = story?.hit_blueprint?.deltas || {};
+  const hitMeans = story?.hit_blueprint?.hit_means || {};
+  const globalMeans = story?.hit_blueprint?.global_means || {};
+
+  // HIGH-LEVEL REVEAL: Show the key differentiators (5-6 features)
+  // More than a glimpse, less than full detail
+  const keyFeatures = [
+    "instrumentalness",
+    "danceability",
+    "loudness",
+    "energy",
+    "acousticness",
+    "duration_min"
+  ].filter((k) => deltas[k] != null);
+
+  const rows = keyFeatures.map((k) => ({
+    feature: k,
+    delta: Number(deltas[k]),
+    hit: Number(hitMeans[k]),
+    overall: Number(globalMeans[k]),
+  }));
+
+  const { g, w, h, svg } = baseSvg("The Pattern Revealed", "");
+
+  if (!rows.length) {
+    g.append("text")
+      .attr("x", w / 2)
+      .attr("y", h / 2)
+      .attr("text-anchor", "middle")
+      .style("fill", "#666")
+      .style("font-weight", 800)
+      .text("No blueprint data found");
+    return;
+  }
+
+  const maxAbsDelta = d3.max(rows, (d) => Math.abs(d.delta)) || 1;
+  const domain = [-maxAbsDelta * 1.1, maxAbsDelta * 1.1];
+
+  const x = d3.scaleLinear().domain(domain).range([0, w]);
+  const y = d3.scaleBand().domain(rows.map((r) => r.feature)).range([0, h]).padding(0.3);
+
+  // Zero line
+  g.append("line")
+    .attr("x1", x(0))
+    .attr("x2", x(0))
+    .attr("y1", -10)
+    .attr("y2", h + 10)
+    .attr("stroke", "#ddd")
+    .attr("stroke-width", 2);
+
+  // Y-axis (feature labels)
+  g.append("g")
+    .call(d3.axisLeft(y))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll(".tick line").remove())
+    .selectAll("text")
+    .style("fill", "#333")
+    .style("font-size", "14px")
+    .style("font-weight", "600")
+    .style("text-transform", "capitalize");
+
+  // Bars with animation
+  const bars = g
+    .selectAll(".blueprint-bar")
+    .data(rows)
+    .enter()
+    .append("rect")
+    .attr("class", "blueprint-bar")
+    .attr("y", (d) => y(d.feature))
+    .attr("height", y.bandwidth())
+    .attr("x", (d) => (d.delta >= 0 ? x(0) : x(d.delta)))
+    .attr("width", 0) // Start at zero for animation
+    .attr("fill", (d) => (d.delta >= 0 ? "#b1162a" : "#2563eb"))
+    .attr("opacity", 0.85);
+
+  // Animate bars in
+  bars
+    .transition()
+    .duration(800)
+    .delay((d, i) => i * 100)
+    .ease(d3.easeCubicOut)
+    .attr("width", (d) => Math.abs(x(d.delta) - x(0)));
+
+  // Add value labels to show the actual differences
+  const labels = g
+    .selectAll(".blueprint-label")
+    .data(rows)
+    .enter()
+    .append("text")
+    .attr("class", "blueprint-label")
+    .attr("y", (d) => y(d.feature) + y.bandwidth() / 2)
+    .attr("dy", "0.35em")
+    .attr("x", (d) => {
+      const barEnd = d.delta >= 0 ? x(d.delta) : x(d.delta);
+      return barEnd + (d.delta >= 0 ? 8 : -8);
+    })
+    .attr("text-anchor", (d) => (d.delta >= 0 ? "start" : "end"))
+    .style("fill", "#333")
+    .style("font-size", "13px")
+    .style("font-weight", "700")
+    .style("opacity", 0)
+    .text((d) => {
+      const sign = d.delta >= 0 ? "+" : "";
+      return `${sign}${d.delta.toFixed(2)}`;
+    });
+
+  labels
+    .transition()
+    .duration(400)
+    .delay((d, i) => i * 100 + 700)
+    .style("opacity", 1);
+
+  // Add informative annotation
+  setTimeout(() => {
+    addAnnotation(
+      svg,
+      w * 0.7,
+      h * 0.15,
+      "These are the key separators between hits and the rest.",
+      400,
+      "top-right"
+    );
+  }, 1200);
+}
+
 /* ---------- STEP 0: INTRO ---------- */
 function drawIntro(story) {
   const intro = story.intro || {};
@@ -357,6 +488,222 @@ function drawIntro(story) {
 }
 
 /* ---------- STEP 1: POPULARITY HIST ---------- */
+/**
+ * STEP 3: Popularity Spectrum with Animated Hit Threshold
+ * Show histogram first, then reveal the hit threshold line and zone
+ */
+function renderPopularitySpectrum(story) {
+  const bins = story?.popularity_spectrum?.hist_5pt || [];
+  const hitThreshold = story?.popularity_spectrum?.hit_threshold_top10;
+  const { g, w, h, svg } = baseSvg("The Popularity Reality", "");
+
+  if (!bins.length) {
+    g.append("text")
+      .attr("x", w / 2)
+      .attr("y", h / 2)
+      .attr("text-anchor", "middle")
+      .style("fill", "#666")
+      .style("font-weight", 800)
+      .text("No popularity histogram data found");
+    return;
+  }
+
+  // Scales
+  const x = d3.scaleBand()
+    .domain(bins.map((d) => d.bin))
+    .range([0, w])
+    .padding(0.1);
+
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(bins, (d) => d.count) || 1])
+    .nice()
+    .range([h, 0]);
+
+  // Helper to get bin midpoint value
+  const getBinMid = (binStr) => {
+    const parts = binStr.split("-");
+    return (parseFloat(parts[0]) + parseFloat(parts[1] || parts[0])) / 2;
+  };
+
+  // Find the bin and x-position for hit threshold
+  let hitBinIndex = -1;
+  let hitLineX = w * 0.9; // fallback
+  
+  if (hitThreshold != null) {
+    hitBinIndex = bins.findIndex((d) => {
+      const mid = getBinMid(d.bin);
+      return mid >= hitThreshold;
+    });
+    if (hitBinIndex >= 0) {
+      hitLineX = x(bins[hitBinIndex].bin);
+    }
+  }
+
+  // Grid
+  addGridY(g, y, w);
+
+  // Axes
+  g.append("g")
+    .attr("transform", `translate(0,${h})`)
+    .call(d3.axisBottom(x).tickValues(bins.map((d) => d.bin).filter((_, i) => i % 3 === 0)))
+    .call((g) => g.select(".domain").attr("stroke", "#ddd"))
+    .selectAll("text")
+    .attr("transform", "rotate(-40)")
+    .style("text-anchor", "end")
+    .style("fill", "#555")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
+    .style("font-weight", "600");
+
+  g.append("g")
+    .call(d3.axisLeft(y).ticks(6))
+    .call((g) => g.select(".domain").remove())
+    .selectAll("text")
+    .style("fill", "#555")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
+    .style("font-weight", "600");
+
+  // Axis labels
+  g.append("text")
+    .attr("text-anchor", "middle")
+    .attr("x", w / 2)
+    .attr("y", h + 58)
+    .style("fill", "#444")
+    .style("font-weight", "700")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
+    .text("Popularity Score");
+
+  g.append("text")
+    .attr("text-anchor", "middle")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -h / 2)
+    .attr("y", -50)
+    .style("fill", "#444")
+    .style("font-weight", "700")
+    .style("font-size", `${AXIS_LABEL_SIZE}px`)
+    .text("Number of Tracks");
+
+  // Bars (initially neutral color)
+  const bars = g
+    .selectAll(".spectrum-bar")
+    .data(bins, (d) => d.bin)
+    .enter()
+    .append("rect")
+    .attr("class", "spectrum-bar")
+    .attr("x", (d) => x(d.bin))
+    .attr("width", x.bandwidth())
+    .attr("y", (d) => y(d.count))
+    .attr("height", (d) => h - y(d.count))
+    .attr("fill", "#888")
+    .attr("opacity", 0.7);
+
+  // Hit zone shading (hidden initially)
+  const hitZone = g
+    .append("rect")
+    .attr("class", "hit-zone-shade")
+    .attr("x", hitLineX)
+    .attr("y", 0)
+    .attr("width", w - hitLineX)
+    .attr("height", h)
+    .attr("fill", "rgba(177, 22, 42, 0.15)")
+    .attr("opacity", 0)
+    .attr("pointer-events", "none");
+
+  // Hit threshold line (hidden initially)
+  const hitLine = g
+    .append("line")
+    .attr("class", "hit-threshold-line")
+    .attr("x1", hitLineX)
+    .attr("x2", hitLineX)
+    .attr("y1", 0)
+    .attr("y2", h)
+    .attr("stroke", "#b1162a")
+    .attr("stroke-width", 3)
+    .attr("stroke-dasharray", "8,4")
+    .attr("opacity", 0);
+
+  // Hit threshold label (hidden initially)
+  const hitLabel = g
+    .append("text")
+    .attr("class", "hit-threshold-label")
+    .attr("x", hitLineX + 8)
+    .attr("y", h * 0.2)
+    .attr("text-anchor", "start")
+    .style("fill", "#b1162a")
+    .style("font-size", "13px")
+    .style("font-weight", "700")
+    .style("opacity", 0)
+    .text(`Hit threshold (top 10%): ${hitThreshold?.toFixed(0) || "?"}`);
+
+  // Zone labels (hidden initially)
+  const longTailLabel = g
+    .append("text")
+    .attr("class", "zone-label")
+    .attr("x", hitLineX / 2)
+    .attr("y", h * 0.1)
+    .attr("text-anchor", "middle")
+    .style("fill", "#666")
+    .style("font-size", "14px")
+    .style("font-weight", "600")
+    .style("opacity", 0)
+    .text("The long tail");
+
+  const hitZoneLabel = g
+    .append("text")
+    .attr("class", "zone-label")
+    .attr("x", hitLineX + (w - hitLineX) / 2)
+    .attr("y", h * 0.1)
+    .attr("text-anchor", "middle")
+    .style("fill", "#b1162a")
+    .style("font-size", "14px")
+    .style("font-weight", "700")
+    .style("opacity", 0)
+    .text("Hit zone");
+
+  // Animate threshold reveal after 800ms
+  setTimeout(() => {
+    // Animate hit zone shading
+    hitZone
+      .transition()
+      .duration(600)
+      .ease(d3.easeCubicOut)
+      .attr("opacity", 1);
+
+    // Animate hit line
+    hitLine
+      .transition()
+      .duration(600)
+      .ease(d3.easeCubicOut)
+      .attr("opacity", 1);
+
+    // Animate labels
+    hitLabel
+      .transition()
+      .duration(400)
+      .delay(400)
+      .attr("opacity", 1);
+
+    longTailLabel
+      .transition()
+      .duration(400)
+      .delay(500)
+      .attr("opacity", 1);
+
+    hitZoneLabel
+      .transition()
+      .duration(400)
+      .delay(500)
+      .attr("opacity", 1);
+
+    // Color-code bars after threshold is revealed
+    bars
+      .transition()
+      .duration(600)
+      .delay(300)
+      .attr("fill", (d, i) => (i >= hitBinIndex ? "#b1162a" : "#333"))
+      .attr("opacity", (d, i) => (i >= hitBinIndex ? 0.9 : 0.6));
+  }, 800);
+}
+
 function drawPopularityHist(story) {
   const bins = story?.popularity_spectrum?.hist_5pt || [];
   const hitThreshold = story?.popularity_spectrum?.hit_threshold_top10;
@@ -756,14 +1103,263 @@ function drawHitDefinition(story) {
 
 }
 
+/**
+ * Appendix-only: small hit definition visual rendered into a footer container.
+ * This does NOT touch the scrollytelling chart root (#chart).
+ */
+export function renderHitDefinitionAppendix(story, mountId = "hit-definition-appendix") {
+  const mount = document.getElementById(mountId);
+  if (!mount) return;
+
+  const hitThreshold = story?.hit_threshold ?? story?.popularity_spectrum?.hit_threshold_top10 ?? null;
+  if (hitThreshold == null) return;
+
+  // Clear mount
+  d3.select(mount).selectAll("*").remove();
+
+  const width = Math.max(320, mount.clientWidth || 520);
+  const height = 140;
+  const margin = { top: 14, right: 14, bottom: 34, left: 14 };
+  const w = width - margin.left - margin.right;
+  const h = height - margin.top - margin.bottom;
+
+  const svg = d3
+    .select(mount)
+    .append("svg")
+    .attr("viewBox", `0 0 ${width} ${height}`)
+    .attr("preserveAspectRatio", "xMidYMid meet");
+
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleLinear().domain([0, 100]).range([0, w]);
+
+  // Base track
+  g.append("rect")
+    .attr("x", 0)
+    .attr("y", h / 2 - 10)
+    .attr("width", w)
+    .attr("height", 20)
+    .attr("rx", 10)
+    .attr("fill", "rgba(0,0,0,0.06)");
+
+  // Hit zone (top 10%)
+  const hitX = x(hitThreshold);
+  const zone = g.append("rect")
+    .attr("x", hitX)
+    .attr("y", h / 2 - 10)
+    .attr("width", w - hitX)
+    .attr("height", 20)
+    .attr("rx", 10)
+    .attr("fill", "rgba(177, 22, 42, 0.18)")
+    .attr("opacity", 0);
+
+  // Threshold line
+  const line = g.append("line")
+    .attr("x1", hitX)
+    .attr("x2", hitX)
+    .attr("y1", h / 2 - 22)
+    .attr("y2", h / 2 + 22)
+    .attr("stroke", "#b1162a")
+    .attr("stroke-width", 2.5)
+    .attr("stroke-dasharray", "6,4")
+    .attr("opacity", 0);
+
+  g.append("text")
+    .attr("x", 0)
+    .attr("y", h + 22)
+    .attr("text-anchor", "start")
+    .style("fill", "#777")
+    .style("font-size", "11px")
+    .style("font-weight", "600")
+    .text("Popularity");
+
+  const label = g.append("text")
+    .attr("x", hitX)
+    .attr("y", h / 2 - 28)
+    .attr("text-anchor", "middle")
+    .style("fill", "#b1162a")
+    .style("font-size", "11px")
+    .style("font-weight", "700")
+    .attr("opacity", 0)
+    .text(`Top 10% threshold (${hitThreshold.toFixed(0)}+)`);
+
+  // Animate in
+  zone.transition().duration(500).ease(d3.easeCubicOut).attr("opacity", 1);
+  line.transition().duration(500).ease(d3.easeCubicOut).attr("opacity", 1);
+  label.transition().duration(350).delay(250).attr("opacity", 1);
+}
+
 /* ---------- STEP 3: EFFECT SIZES ---------- */
+/**
+ * STEP 5: Feature Separation (Ranked by Effect Size)
+ * Clean horizontal bar chart showing top 5 features that separate hits from non-hits
+ * Centered on zero with Cohen's d effect sizes
+ */
+function renderFeatureSeparation(story) {
+  const { g, w, h, svg } = baseSvg("What Separates Hits", "");
+
+  // Get feature effects data
+  let rows = story?.feature_effects || story?.effect_sizes || null;
+
+  if (!Array.isArray(rows)) {
+    g.append("text")
+      .attr("x", w / 2)
+      .attr("y", h / 2)
+      .attr("text-anchor", "middle")
+      .style("fill", "#666")
+      .style("font-weight", 800)
+      .text("No feature effects data found");
+    return;
+  }
+
+  // Normalize and extract Cohen's d (standardized effect size)
+  const cleaned = rows
+    .map((r) => {
+      const feature = r.feature ?? r.name ?? r.col;
+      const cohens_d = Number(r.cohen_d ?? r.cohens_d ?? r.d ?? r.effect_size);
+      const delta = Number(r.delta ?? r.diff ?? 0);
+      
+      if (!feature || !Number.isFinite(cohens_d)) return null;
+      return { feature, cohens_d, delta };
+    })
+    .filter(Boolean);
+
+  // Sort by absolute effect size and take top 5
+  cleaned.sort((a, b) => Math.abs(b.cohens_d) - Math.abs(a.cohens_d));
+  const data = cleaned.slice(0, 5);
+
+  if (data.length === 0) {
+    g.append("text")
+      .attr("x", w / 2)
+      .attr("y", h / 2)
+      .attr("text-anchor", "middle")
+      .style("fill", "#666")
+      .text("No valid effect size data");
+    return;
+  }
+
+  // Scales
+  const maxAbsEffect = d3.max(data, (d) => Math.abs(d.cohens_d)) || 0.5;
+  const domain = [-maxAbsEffect * 1.15, maxAbsEffect * 1.15];
+
+  const x = d3.scaleLinear()
+    .domain(domain)
+    .range([0, w]);
+
+  const y = d3.scaleBand()
+    .domain(data.map((d) => d.feature))
+    .range([0, h])
+    .padding(0.35);
+
+  // Zero line (centered)
+  g.append("line")
+    .attr("x1", x(0))
+    .attr("x2", x(0))
+    .attr("y1", -15)
+    .attr("y2", h + 15)
+    .attr("stroke", "#aaa")
+    .attr("stroke-width", 2);
+
+  // Axis labels at top
+  g.append("text")
+    .attr("x", x(domain[0]))
+    .attr("y", -25)
+    .attr("text-anchor", "start")
+    .style("fill", "#2563eb")
+    .style("font-size", "12px")
+    .style("font-weight", "700")
+    .text("← Lower in hits");
+
+  g.append("text")
+    .attr("x", x(domain[1]))
+    .attr("y", -25)
+    .attr("text-anchor", "end")
+    .style("fill", "#b1162a")
+    .style("font-size", "12px")
+    .style("font-weight", "700")
+    .text("Higher in hits →");
+
+  // Y-axis (feature labels)
+  g.append("g")
+    .call(d3.axisLeft(y))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll(".tick line").remove())
+    .selectAll("text")
+    .style("fill", "#333")
+    .style("font-size", "15px")
+    .style("font-weight", "700")
+    .style("text-transform", "capitalize");
+
+  // Bars
+  const bars = g
+    .selectAll(".separation-bar")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("class", "separation-bar")
+    .attr("y", (d) => y(d.feature))
+    .attr("height", y.bandwidth())
+    .attr("x", (d) => (d.cohens_d >= 0 ? x(0) : x(d.cohens_d)))
+    .attr("width", (d) => Math.abs(x(d.cohens_d) - x(0)))
+    .attr("fill", (d) => (d.cohens_d >= 0 ? "#b1162a" : "#2563eb"))
+    .attr("opacity", 0.85)
+    .attr("rx", 3);
+
+  // Effect size labels (on bars)
+  g.selectAll(".effect-label")
+    .data(data)
+    .enter()
+    .append("text")
+    .attr("class", "effect-label")
+    .attr("y", (d) => y(d.feature) + y.bandwidth() / 2)
+    .attr("dy", "0.35em")
+    .attr("x", (d) => {
+      const barEnd = d.cohens_d >= 0 ? x(d.cohens_d) : x(d.cohens_d);
+      return barEnd + (d.cohens_d >= 0 ? 8 : -8);
+    })
+    .attr("text-anchor", (d) => (d.cohens_d >= 0 ? "start" : "end"))
+    .style("fill", "#333")
+    .style("font-size", "13px")
+    .style("font-weight", "700")
+    .text((d) => {
+      const sign = d.cohens_d >= 0 ? "+" : "";
+      return `${sign}${d.cohens_d.toFixed(2)}`;
+    });
+
+  // Footer explanation
+  g.append("text")
+    .attr("x", w / 2)
+    .attr("y", h + 48)
+    .attr("text-anchor", "middle")
+    .style("fill", "#666")
+    .style("font-size", "12px")
+    .style("font-style", "italic")
+    .text("Effect size (Cohen's d): measures strength of difference between hits and non-hits");
+
+  // Annotation highlighting strongest separator
+  const strongest = data[0];
+  const strongestX = strongest.cohens_d >= 0 ? x(strongest.cohens_d) + 20 : x(strongest.cohens_d) - 20;
+  const strongestY = y(strongest.feature) + y.bandwidth() / 2;
+
+  setTimeout(() => {
+    addAnnotation(
+      svg,
+      strongestX + 60,
+      strongestY - 30,
+      `Strongest separator: ${strongest.feature}`,
+      0,
+      "top-right"
+    );
+  }, 600);
+}
+
 function drawEffectSizes(story) {
   const mode = (localStorage.getItem("audienceMode") || "culture").toLowerCase();
   const { g, w, h } = baseSvg(
     "Feature anatomy",
     mode === "producer"
       ? "Which features separate hits vs non-hits the most?"
-      : "Do hits “sound” different — and which features move most?"
+      : "Do hits \"sound\" different — and which features move most?"
   );
 
   // Try to find a table
@@ -1013,6 +1609,203 @@ function drawEffectSizes(story) {
 }
 
 /* ---------- STEP 4: FEATURE LINES (0..1) ---------- */
+/**
+ * STEP 6: The Vibe Shift
+ * Animated line chart showing how danceability, energy, and valence
+ * change across popularity bands. Dynamic and musical.
+ */
+function renderVibeShift(story) {
+  const rows = story?.feature_anatomy?.means_by_pop_band || [];
+  const features = ["danceability", "energy", "valence"];
+  
+  const { g, w, h, svg } = baseSvg("The Vibe Shift", "");
+
+  if (!rows.length) {
+    g.append("text")
+      .attr("x", w / 2)
+      .attr("y", h / 2)
+      .attr("text-anchor", "middle")
+      .style("fill", "#666")
+      .style("font-weight", 800)
+      .text("No feature profile data found");
+    return;
+  }
+
+  // Validate data
+  const validKeys = features.filter((k) => rows[0] && k in rows[0]);
+  if (!validKeys.length) {
+    g.append("text")
+      .attr("x", w / 2)
+      .attr("y", h / 2)
+      .attr("text-anchor", "middle")
+      .style("fill", "#666")
+      .text("Missing feature data");
+    return;
+  }
+
+  const bands = rows.map((d) => d.pop_band);
+  
+  // Scales
+  const x = d3.scalePoint()
+    .domain(bands)
+    .range([0, w])
+    .padding(0.15);
+
+  const y = d3.scaleLinear()
+    .domain([0, 1])
+    .range([h, 0]);
+
+  // Highlight zone for highest popularity band
+  const lastBandX = x(bands[bands.length - 1]);
+  const bandWidth = w / bands.length;
+  
+  g.append("rect")
+    .attr("class", "highlight-zone")
+    .attr("x", lastBandX - bandWidth / 2)
+    .attr("y", 0)
+    .attr("width", bandWidth)
+    .attr("height", h)
+    .attr("fill", "rgba(177, 22, 42, 0.08)")
+    .attr("opacity", 0)
+    .transition()
+    .duration(800)
+    .delay(1400)
+    .attr("opacity", 1);
+
+  // Subtle grid
+  addGridY(g, y, w);
+
+  // Axes
+  g.append("g")
+    .attr("transform", `translate(0,${h})`)
+    .call(d3.axisBottom(x).tickValues(bands.filter((_, i) => i % 2 === 0)))
+    .call((g) => g.select(".domain").attr("stroke", "#ddd"))
+    .selectAll("text")
+    .style("fill", "#555")
+    .style("font-size", "11px")
+    .style("font-weight", "600");
+
+  g.append("g")
+    .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(".1f")))
+    .call((g) => g.select(".domain").remove())
+    .selectAll("text")
+    .style("fill", "#555")
+    .style("font-size", `${AXIS_TICK_SIZE}px`);
+
+  // Axis labels
+  g.append("text")
+    .attr("x", w / 2)
+    .attr("y", h + 40)
+    .attr("text-anchor", "middle")
+    .style("fill", "#444")
+    .style("font-size", "12px")
+    .style("font-weight", "600")
+    .text("Popularity →");
+
+  // Musical color palette (restrained but vibrant)
+  const palette = {
+    danceability: "#6366f1", // Indigo (rhythm)
+    energy: "#b1162a",       // Red (intensity)
+    valence: "#f59e0b"       // Amber (mood)
+  };
+
+  // Line generator with smooth curve
+  const line = d3.line()
+    .x((d) => x(d.pop_band))
+    .y((d) => y(d.value))
+    .curve(d3.curveCatmullRom.alpha(0.5));
+
+  // Prepare line data for each feature
+  const lineData = validKeys.map((key) => ({
+    key,
+    values: rows.map((d) => ({
+      pop_band: d.pop_band,
+      value: Number(d[key]) || 0
+    }))
+  }));
+
+  // Draw lines (initially invisible for animation)
+  lineData.forEach((series, idx) => {
+    const path = g.append("path")
+      .datum(series.values)
+      .attr("class", `vibe-line vibe-line-${series.key}`)
+      .attr("fill", "none")
+      .attr("stroke", palette[series.key])
+      .attr("stroke-width", 3.5)
+      .attr("stroke-linecap", "round")
+      .attr("stroke-linejoin", "round")
+      .attr("d", line)
+      .attr("opacity", 0);
+
+    // Animate line drawing
+    const totalLength = path.node().getTotalLength();
+    
+    path
+      .attr("stroke-dasharray", `${totalLength} ${totalLength}`)
+      .attr("stroke-dashoffset", totalLength)
+      .attr("opacity", 0.9)
+      .transition()
+      .duration(1200)
+      .delay(idx * 200)
+      .ease(d3.easeCubicInOut)
+      .attr("stroke-dashoffset", 0);
+  });
+
+  // Add endpoint circles (appear after lines)
+  setTimeout(() => {
+    validKeys.forEach((key) => {
+      const lastPoint = rows[rows.length - 1];
+      const value = Number(lastPoint[key]) || 0;
+      
+      g.append("circle")
+        .attr("class", `endpoint-${key}`)
+        .attr("cx", x(lastPoint.pop_band))
+        .attr("cy", y(value))
+        .attr("r", 0)
+        .attr("fill", palette[key])
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 2)
+        .transition()
+        .duration(400)
+        .attr("r", 6);
+    });
+  }, 1400);
+
+  // Legend (fade in after lines)
+  const legend = g.append("g")
+    .attr("class", "vibe-legend")
+    .attr("transform", `translate(${w - 120}, 20)`)
+    .attr("opacity", 0);
+
+  validKeys.forEach((key, i) => {
+    const legendRow = legend.append("g")
+      .attr("transform", `translate(0, ${i * 24})`);
+
+    legendRow.append("line")
+      .attr("x1", 0)
+      .attr("x2", 20)
+      .attr("y1", 0)
+      .attr("y2", 0)
+      .attr("stroke", palette[key])
+      .attr("stroke-width", 3);
+
+    legendRow.append("text")
+      .attr("x", 28)
+      .attr("y", 4)
+      .style("font-size", "13px")
+      .style("font-weight", "600")
+      .style("fill", "#333")
+      .style("text-transform", "capitalize")
+      .text(key);
+  });
+
+  legend
+    .transition()
+    .duration(600)
+    .delay(1600)
+    .attr("opacity", 1);
+}
+
 function drawFeatureLines01(story) {
   const rows = story?.feature_anatomy?.means_by_pop_band || [];
   const keys = ["danceability", "energy", "valence"].filter((k) => rows[0] && k in rows[0]);
@@ -1435,6 +2228,222 @@ function drawStructureLines(story) {
 }
 
 /* ---------- STEP 6: GENRE HEATMAP ---------- */
+/**
+ * STEP 8: Genre Fingerprint Heatmap
+ * Clean z-score heatmap showing top 8 genres
+ * Features on x-axis, genres on y-axis
+ */
+function renderGenreFingerprint(story) {
+  const allZScores = story?.genre_fingerprints?.z_scores || [];
+  const allGenres = story?.genre_fingerprints?.top_genres || [];
+  const features = story?.genre_fingerprints?.features || [];
+
+  const { g, w, h, svg } = baseSvg("Genre Fingerprints", "");
+
+  if (!allZScores.length || !allGenres.length || !features.length) {
+    g.append("text")
+      .attr("x", w / 2)
+      .attr("y", h / 2)
+      .attr("text-anchor", "middle")
+      .style("fill", "#666")
+      .style("font-weight", 800)
+      .text("No genre fingerprint data found");
+    return;
+  }
+
+  // Select 5 most distinctive genres for clarity
+  // Prioritize: pop (baseline), grunge, chill, hip-hop, progressive-house
+  const targetGenres = ["pop", "grunge", "chill", "hip-hop", "progressive-house"];
+  const genres = targetGenres.filter(g => allGenres.includes(g));
+  
+  // If any are missing, fill from top genres
+  if (genres.length < 5) {
+    for (const g of allGenres) {
+      if (!genres.includes(g) && genres.length < 5) {
+        genres.push(g);
+      }
+    }
+  }
+  
+  // Filter z-scores to only include selected genres
+  const zScores = allZScores.filter((d) => genres.includes(d.genre));
+
+  // Scales
+  const x = d3.scaleBand()
+    .domain(features)
+    .range([0, w])
+    .padding(0.12);
+
+  const y = d3.scaleBand()
+    .domain(genres)
+    .range([0, h])
+    .padding(0.15);
+
+  // Diverging color scale (blue = below average, red = above average)
+  const maxAbs = d3.max(zScores, (d) => Math.abs(d.z)) || 2;
+  const color = d3.scaleDiverging()
+    .domain([-maxAbs, 0, maxAbs])
+    .interpolator(d3.interpolateRdBu);
+
+  // X-axis (features)
+  g.append("g")
+    .attr("transform", `translate(0,${h})`)
+    .call(d3.axisBottom(x))
+    .call((g) => g.select(".domain").remove())
+    .selectAll("text")
+    .attr("transform", "rotate(-35)")
+    .style("text-anchor", "end")
+    .style("fill", "#444")
+    .style("font-size", "11px")
+    .style("font-weight", "600")
+    .style("text-transform", "capitalize");
+
+  // Y-axis (genres)
+  g.append("g")
+    .call(d3.axisLeft(y))
+    .call((g) => g.select(".domain").remove())
+    .selectAll("text")
+    .style("fill", "#333")
+    .style("font-size", "13px")
+    .style("font-weight", "700")
+    .style("text-transform", "capitalize");
+
+  // Heatmap cells with visual emphasis on extremes
+  const cells = g
+    .selectAll(".fingerprint-cell")
+    .data(zScores)
+    .enter()
+    .append("rect")
+    .attr("class", "fingerprint-cell")
+    .attr("x", (d) => x(d.feature))
+    .attr("y", (d) => y(d.genre))
+    .attr("width", x.bandwidth())
+    .attr("height", y.bandwidth())
+    .attr("rx", 3)
+    .attr("fill", (d) => color(d.z))
+    .attr("opacity", (d) => {
+      // Emphasize extreme values (highly distinct)
+      const absZ = Math.abs(d.z);
+      if (absZ > 1.5) return 1.0;  // Strong distinctiveness
+      if (absZ > 0.8) return 0.9;  // Moderate distinctiveness
+      return 0.6;  // Low distinctiveness (convergence)
+    })
+    .style("cursor", "pointer")
+    .attr("stroke", (d) => {
+      // Border for highly distinctive cells
+      return Math.abs(d.z) > 1.5 ? "#333" : "none";
+    })
+    .attr("stroke-width", (d) => Math.abs(d.z) > 1.5 ? 1.5 : 0);
+
+  // Tooltip on hover
+  cells
+    .on("mouseover", function (event, d) {
+      d3.select(this).attr("opacity", 1).attr("stroke", "#333").attr("stroke-width", 2);
+      
+      const direction = d.z > 0 ? "above" : "below";
+      const absZ = Math.abs(d.z).toFixed(2);
+      showTip(
+        `<strong>${d.genre}</strong><br/>${d.feature}: ${absZ}σ ${direction} average`,
+        event.pageX,
+        event.pageY
+      );
+    })
+    .on("mouseout", function () {
+      d3.select(this).attr("opacity", 0.85).attr("stroke", "none");
+      hideTip();
+    });
+
+  // Legend
+  const legendWidth = 200;
+  const legendHeight = 12;
+  const legendX = w - legendWidth - 10;
+  const legendY = -35;
+
+  const legendScale = d3.scaleLinear()
+    .domain([-maxAbs, maxAbs])
+    .range([0, legendWidth]);
+
+  const legendAxis = d3.axisBottom(legendScale)
+    .ticks(5)
+    .tickFormat((d) => (d > 0 ? `+${d.toFixed(1)}` : d.toFixed(1)));
+
+  // Gradient for legend
+  const defs = svg.select("defs").empty() ? svg.append("defs") : svg.select("defs");
+  
+  const gradient = defs.append("linearGradient")
+    .attr("id", "fingerprint-gradient")
+    .attr("x1", "0%")
+    .attr("x2", "100%");
+
+  const numStops = 20;
+  for (let i = 0; i <= numStops; i++) {
+    const t = i / numStops;
+    const value = -maxAbs + t * (2 * maxAbs);
+    gradient.append("stop")
+      .attr("offset", `${t * 100}%`)
+      .attr("stop-color", color(value));
+  }
+
+  const legend = g.append("g")
+    .attr("class", "fingerprint-legend")
+    .attr("transform", `translate(${legendX}, ${legendY})`);
+
+  legend.append("rect")
+    .attr("width", legendWidth)
+    .attr("height", legendHeight)
+    .style("fill", "url(#fingerprint-gradient)")
+    .attr("rx", 2);
+
+  legend.append("g")
+    .attr("transform", `translate(0, ${legendHeight})`)
+    .call(legendAxis)
+    .selectAll("text")
+    .style("font-size", "10px")
+    .style("fill", "#666");
+
+  legend.append("text")
+    .attr("x", legendWidth / 2)
+    .attr("y", -8)
+    .attr("text-anchor", "middle")
+    .style("font-size", "11px")
+    .style("font-weight", "600")
+    .style("fill", "#444")
+    .text("Z-score (σ from average)");
+
+  // Calculate convergence metric: avg absolute z-score
+  const avgAbsZ = d3.mean(zScores, (d) => Math.abs(d.z));
+  
+  // Verdict based on average deviation
+  let verdict = "";
+  if (avgAbsZ < 0.5) {
+    verdict = "Genres are converging — sonic fingerprints are blurring.";
+  } else if (avgAbsZ < 1.0) {
+    verdict = "Genres remain partially distinct — overlapping, but identifiable.";
+  } else {
+    verdict = "Genres stay clearly distinct — sonic identities persist.";
+  }
+
+  // Add verdict text at the bottom
+  g.append("text")
+    .attr("x", w / 2)
+    .attr("y", h + 55)
+    .attr("text-anchor", "middle")
+    .style("font-size", "14px")
+    .style("font-weight", "700")
+    .style("font-style", "italic")
+    .style("fill", "#b1162a")
+    .text(verdict);
+
+  // Add subtle context note
+  g.append("text")
+    .attr("x", w / 2)
+    .attr("y", h + 72)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("fill", "#666")
+    .text(`(Avg deviation: ${avgAbsZ.toFixed(2)}σ across ${zScores.length} feature-genre pairs)`);
+}
+
 function drawGenreHeatmap(story) {
   const z = story?.genre_fingerprints?.z_scores || [];
   const genres = story?.genre_fingerprints?.top_genres || [];
@@ -1862,7 +2871,7 @@ function drawBlueprintDeltas(story) {
     overall: Number(globalMeans[k]),
   }));
 
-  const { g, w, h } = baseSvg("Hit blueprint", "Difference between hit average and overall average (hit - overall)");
+  const { g, w, h } = baseSvg("Anatomy Explained", "Difference between hit average and overall average (hit - overall)");
 
   if (!rows.length) {
     g.append("text")
@@ -1945,6 +2954,141 @@ function drawBlueprintDeltas(story) {
       );
     })
     .on("mouseleave", hideTip);
+
+  // Add precise value labels (this is the detailed view)
+  const labels = g
+    .selectAll(".blueprint-value-label")
+    .data(rows)
+    .enter()
+    .append("text")
+    .attr("class", "blueprint-value-label")
+    .attr("y", (d) => y(d.feature) + y.bandwidth() / 2)
+    .attr("dy", "0.35em")
+    .attr("x", (d) => {
+      const barEnd = d.delta >= 0 ? x(d.delta) : x(d.delta);
+      return barEnd + (d.delta >= 0 ? 8 : -8);
+    })
+    .attr("text-anchor", (d) => (d.delta >= 0 ? "start" : "end"))
+    .style("fill", "#333")
+    .style("font-size", "12px")
+    .style("font-weight", "700")
+    .style("opacity", 0)
+    .text((d) => {
+      const sign = d.delta >= 0 ? "+" : "";
+      return `${sign}${d.delta.toFixed(2)}`;
+    });
+
+  labels
+    .transition()
+    .duration(400)
+    .delay(700)
+    .style("opacity", 1);
+
+  // === SONG OVERLAYS (moved from early blueprint) ===
+  const exampleHits = story?.intro?.example_hits || [];
+  
+  if (exampleHits.length > 0) {
+    const numSongs = Math.min(5, exampleHits.length);
+    const step = Math.floor(exampleHits.length / numSongs);
+    const selectedSongs = [];
+    
+    for (let i = 0; i < numSongs; i++) {
+      const idx = Math.min(i * step, exampleHits.length - 1);
+      selectedSongs.push(exampleHits[idx]);
+    }
+
+    const songPoints = [];
+    selectedSongs.forEach((song, songIdx) => {
+      rows.forEach((row) => {
+        const feature = row.feature;
+        const songValue = Number(song[feature]);
+        
+        if (Number.isFinite(songValue) && Number.isFinite(row.overall)) {
+          const deviation = songValue - row.overall;
+          songPoints.push({
+            song,
+            feature,
+            value: songValue,
+            deviation,
+            songIdx,
+            row
+          });
+        }
+      });
+    });
+
+    const songColors = ["#f59e0b", "#10b981", "#8b5cf6", "#ec4899", "#06b6d4"];
+
+    setTimeout(() => {
+      if (songPoints.length === 0) return;
+
+      const points = g
+        .selectAll(".song-point")
+        .data(songPoints)
+        .enter()
+        .append("circle")
+        .attr("class", "song-point")
+        .attr("cx", (d) => x(d.deviation))
+        .attr("cy", (d) => y(d.feature) + y.bandwidth() / 2)
+        .attr("r", 5)
+        .attr("fill", (d) => songColors[d.songIdx % songColors.length])
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 1.5)
+        .attr("opacity", 0)
+        .style("cursor", "pointer");
+
+      points
+        .transition()
+        .duration(600)
+        .delay((d, i) => i * 10)
+        .attr("opacity", 0.85);
+
+      points
+        .on("mouseover", function (event, d) {
+          d3.select(this).transition().duration(200).attr("r", 8).attr("opacity", 1);
+          const direction = d.deviation >= 0 ? "higher" : "lower";
+          showTip(
+            `<strong>${d.song.track_name}</strong><br/>
+            <em>${d.song.artists}</em><br/>
+            Popularity: ${d.song.popularity}<br/>
+            <br/>
+            ${d.feature}: ${Math.abs(d.deviation).toFixed(2)} ${direction}`,
+            event.pageX,
+            event.pageY
+          );
+        })
+        .on("mouseout", function () {
+          d3.select(this).transition().duration(200).attr("r", 5).attr("opacity", 0.85);
+          hideTip();
+        });
+
+      // Song legend
+      const songLegend = g
+        .append("g")
+        .attr("class", "song-legend")
+        .attr("transform", `translate(10, ${h + 50})`);
+
+      songLegend
+        .append("text")
+        .attr("x", 0)
+        .attr("y", 0)
+        .style("font-size", "10px")
+        .style("font-weight", "600")
+        .style("fill", "#666")
+        .text("Sample hits:");
+
+      selectedSongs.forEach((song, i) => {
+        const item = songLegend.append("g").attr("transform", `translate(${i * 120}, 12)`);
+        item.append("circle").attr("r", 3).attr("fill", songColors[i]).attr("stroke", "#fff");
+        item.append("text")
+          .attr("x", 6)
+          .attr("y", 3)
+          .style("font-size", "9px")
+          .style("fill", "#444")
+          .text(song.track_name.length > 15 ? song.track_name.substring(0, 12) + "..." : song.track_name);
+      });
+    }, 1000);
+  }
 }
 
 /* ---------- STEP 8.1: FEATURE VARIANCE (Hits vs Non-hits) ---------- */
@@ -2195,6 +3339,128 @@ function drawFeatureVariance(story) {
 }
 
 /* ---------- STEP 9: TAKEAWAY ---------- */
+/**
+ * STEP 12: Editorial Close
+ * Minimal visualization - faded blueprint in background, text emphasized
+ * This is a reflective, editorial moment to end the story
+ */
+function renderEditorialClose(story) {
+  const deltas = story?.hit_blueprint?.deltas || {};
+  const hitMeans = story?.hit_blueprint?.hit_means || {};
+  const globalMeans = story?.hit_blueprint?.global_means || {};
+
+  const keyFeatures = [
+    "danceability",
+    "energy",
+    "loudness",
+    "instrumentalness",
+    "acousticness",
+    "duration_min"
+  ].filter((k) => deltas[k] != null);
+
+  const rows = keyFeatures.map((k) => ({
+    feature: k,
+    delta: Number(deltas[k]),
+    hit: Number(hitMeans[k]),
+    overall: Number(globalMeans[k]),
+  }));
+
+  rows.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
+
+  const { g, w, h, svg } = baseSvg("", "");
+
+  // Remove title/subtitle for minimal look
+  svg.select("text").remove();  // Remove any title
+
+  if (rows.length > 0) {
+    const maxAbsDelta = d3.max(rows, (d) => Math.abs(d.delta)) || 1;
+    const domain = [-maxAbsDelta * 1.1, maxAbsDelta * 1.1];
+
+    const x = d3.scaleLinear().domain(domain).range([0, w]);
+    const y = d3.scaleBand().domain(rows.map((r) => r.feature)).range([0, h]).padding(0.3);
+
+    // Faint zero line
+    g.append("line")
+      .attr("x1", x(0))
+      .attr("x2", x(0))
+      .attr("y1", 0)
+      .attr("y2", h)
+      .attr("stroke", "#e5e5e5")
+      .attr("stroke-width", 1);
+
+    // Faint y-axis labels
+    g.append("g")
+      .call(d3.axisLeft(y))
+      .call((g) => g.select(".domain").remove())
+      .call((g) => g.selectAll(".tick line").remove())
+      .selectAll("text")
+      .style("fill", "#d0d0d0")
+      .style("font-size", "12px")
+      .style("font-weight", "400")
+      .style("text-transform", "capitalize");
+
+    // Very faint bars (background ghost)
+    g.selectAll(".ghost-bar")
+      .data(rows)
+      .enter()
+      .append("rect")
+      .attr("class", "ghost-bar")
+      .attr("y", (d) => y(d.feature))
+      .attr("height", y.bandwidth())
+      .attr("x", (d) => (d.delta >= 0 ? x(0) : x(d.delta)))
+      .attr("width", (d) => Math.abs(x(d.delta) - x(0)))
+      .attr("fill", (d) => (d.delta >= 0 ? "#b1162a" : "#2563eb"))
+      .attr("opacity", 0.08)  // Very faint
+      .attr("rx", 3);
+  }
+
+  // Text overlay (emphasized)
+  const textOverlay = svg
+    .append("foreignObject")
+    .attr("x", 0)
+    .attr("y", h * 0.25)
+    .attr("width", w + 180)  // Include margins
+    .attr("height", h * 0.6);
+
+  const textDiv = textOverlay
+    .append("xhtml:div")
+    .style("display", "flex")
+    .style("flex-direction", "column")
+    .style("align-items", "center")
+    .style("justify-content", "center")
+    .style("height", "100%")
+    .style("padding", "0 60px")
+    .style("text-align", "center")
+    .style("font-family", "ui-serif, Georgia, serif");
+
+  // Main closing text
+  textDiv
+    .append("p")
+    .style("font-size", "clamp(18px, 3vw, 24px)")
+    .style("line-height", "1.6")
+    .style("color", "#1a1a1a")
+    .style("font-weight", "400")
+    .style("margin", "0 0 20px")
+    .style("max-width", "600px")
+    .html(
+      "The blueprint was never a recipe. <br/>It's a map of where we've been — <br/>and a question about where we're going."
+    );
+
+  // Secondary text
+  textDiv
+    .append("p")
+    .style("font-size", "clamp(14px, 2vw, 16px)")
+    .style("line-height", "1.7")
+    .style("color", "#666")
+    .style("font-weight", "400")
+    .style("margin", "0")
+    .style("max-width", "550px")
+    .style("font-style", "italic")
+    .html(
+      "In streaming culture, patterns emerge — but the choice remains: follow the data, or challenge it."
+    );
+}
+
 function drawTakeaway(story) {
   const effects = (story?.takeaway?.top_effects || []).slice(0, 6);
   const over = (story?.takeaway?.genre_overrepresentation || []).slice(0, 8);
@@ -2255,20 +3521,330 @@ function drawTakeaway(story) {
 }
 
 /* ---------- Router ---------- */
+/**
+ * STEP 0: Cold Open — Song Cards
+ * Show 3-4 example songs (top 1%, median, low popularity)
+ * as magazine-style cards with key audio features
+ */
+function renderSongCards(story) {
+  const intro = story.intro || {};
+  const examples = intro.example_hits || [];
+  
+  if (examples.length === 0) {
+    d3.select("#chart").append("p").text("No example songs available");
+    return;
+  }
+
+  // Select representative songs
+  const topSong = examples[0]; // Highest popularity
+  const medianIdx = Math.floor(examples.length / 2);
+  const medianSong = examples[medianIdx];
+  const lowSong = examples[examples.length - 1]; // Lowest in top examples
+  
+  const selectedSongs = [topSong, medianSong, lowSong];
+
+  // Create HTML container
+  const root = d3.select("#chart");
+  const container = root
+    .append("div")
+    .attr("class", "song-cards-container");
+
+  // Add heading
+  container
+    .append("h3")
+    .attr("class", "song-cards-heading")
+    .text("Three songs. Three realities.");
+
+  // Add subheading
+  container
+    .append("p")
+    .attr("class", "song-cards-subheading")
+    .text("What separates a viral hit from the long tail? Let's compare three tracks from our dataset.");
+
+  // Create cards wrapper
+  const cardsWrapper = container
+    .append("div")
+    .attr("class", "song-cards-wrapper");
+
+  // Render each song card
+  selectedSongs.forEach((song, idx) => {
+    if (!song) return;
+
+    const card = cardsWrapper
+      .append("div")
+      .attr("class", `song-card song-card-${idx}`);
+
+    // Popularity badge
+    let badge = "";
+    if (idx === 0) badge = "Top 1%";
+    else if (idx === 1) badge = "Median";
+    else badge = "Long tail";
+
+    card
+      .append("div")
+      .attr("class", "song-card-badge")
+      .text(badge);
+
+    // Track name
+    card
+      .append("div")
+      .attr("class", "song-card-title")
+      .text(song.track_name || "Unknown Track");
+
+    // Artist
+    card
+      .append("div")
+      .attr("class", "song-card-artist")
+      .text(song.artists || "Unknown Artist");
+
+    // Popularity score
+    card
+      .append("div")
+      .attr("class", "song-card-popularity")
+      .html(`<span class="label">Popularity</span> <span class="value">${song.popularity || 0}</span>`);
+
+    // Audio features (danceability, energy, loudness)
+    const features = [
+      { name: "Danceability", value: song.danceability || 0, max: 1 },
+      { name: "Energy", value: song.energy || 0, max: 1 },
+      { name: "Loudness", value: (song.loudness || -30) + 30, max: 30 } // Normalize loudness from [-30, 0] to [0, 30]
+    ];
+
+    const featuresWrapper = card
+      .append("div")
+      .attr("class", "song-card-features");
+
+    features.forEach(feature => {
+      const featureRow = featuresWrapper
+        .append("div")
+        .attr("class", "feature-row");
+
+      featureRow
+        .append("div")
+        .attr("class", "feature-label")
+        .text(feature.name);
+
+      const barContainer = featureRow
+        .append("div")
+        .attr("class", "feature-bar-container");
+
+      const percentage = (feature.value / feature.max) * 100;
+      barContainer
+        .append("div")
+        .attr("class", "feature-bar")
+        .style("width", `${Math.max(0, Math.min(100, percentage))}%`);
+
+      featureRow
+        .append("div")
+        .attr("class", "feature-value")
+        .text(feature.value.toFixed(2));
+    });
+  });
+}
+
+/**
+ * STEP 7: The Power of Profanity
+ * Compare explicit vs non-explicit tracks
+ */
+function renderExplicitAnalysis(story) {
+  const data = story?.explicit_analysis;
+  
+  if (!data) {
+    d3.select("#chart").append("p").text("No explicit analysis data available");
+    return;
+  }
+
+  const { g, w, h } = baseSvg("Explicit vs Clean", "");
+
+  // Prepare data for visualization
+  const comparisonData = [
+    {
+      label: "Hit Rate (%)",
+      explicit: data.explicit_hit_rate * 100,
+      nonExplicit: data.non_explicit_hit_rate * 100,
+      format: (d) => `${d.toFixed(1)}%`
+    },
+    {
+      label: "Average Popularity",
+      explicit: data.explicit_mean_pop,
+      nonExplicit: data.non_explicit_mean_pop,
+      format: (d) => d.toFixed(1)
+    }
+  ];
+
+  const margin = { top: 40, right: 120, bottom: 60, left: 140 };
+  const chartW = w - margin.left - margin.right;
+  const chartH = h - margin.top - margin.bottom;
+
+  const chart = g.append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+  // Scales
+  const y = d3.scaleBand()
+    .domain(comparisonData.map(d => d.label))
+    .range([0, chartH])
+    .padding(0.3);
+
+  const maxVal = d3.max(comparisonData.flatMap(d => [d.explicit, d.nonExplicit])) || 100;
+  const x = d3.scaleLinear()
+    .domain([0, maxVal * 1.1])
+    .nice()
+    .range([0, chartW]);
+
+  // Grid
+  chart.append("g")
+    .attr("class", "grid")
+    .selectAll("line")
+    .data(x.ticks(6))
+    .enter()
+    .append("line")
+    .attr("x1", d => x(d))
+    .attr("x2", d => x(d))
+    .attr("y1", 0)
+    .attr("y2", chartH)
+    .attr("stroke", "#eee")
+    .attr("stroke-width", 1);
+
+  // Y-axis labels
+  chart.append("g")
+    .selectAll("text")
+    .data(comparisonData)
+    .enter()
+    .append("text")
+    .attr("x", -10)
+    .attr("y", d => y(d.label) + y.bandwidth() / 2)
+    .attr("dy", "0.35em")
+    .attr("text-anchor", "end")
+    .style("font-size", "14px")
+    .style("font-weight", "700")
+    .style("fill", "#333")
+    .text(d => d.label);
+
+  // Bar groups
+  const barHeight = y.bandwidth() / 2.5;
+  const barGap = y.bandwidth() * 0.15;
+
+  // Explicit bars (red)
+  const explicitBars = chart.selectAll(".explicit-bar")
+    .data(comparisonData)
+    .enter()
+    .append("g")
+    .attr("class", "explicit-bar");
+
+  explicitBars.append("rect")
+    .attr("x", 0)
+    .attr("y", d => y(d.label) - barGap)
+    .attr("width", 0)
+    .attr("height", barHeight)
+    .attr("fill", "#b1162a")
+    .attr("opacity", 0.9)
+    .transition()
+    .duration(800)
+    .attr("width", d => x(d.explicit));
+
+  explicitBars.append("text")
+    .attr("x", d => x(d.explicit) + 5)
+    .attr("y", d => y(d.label) - barGap + barHeight / 2)
+    .attr("dy", "0.35em")
+    .style("font-size", "13px")
+    .style("font-weight", "700")
+    .style("fill", "#b1162a")
+    .style("opacity", 0)
+    .text(d => d.format(d.explicit))
+    .transition()
+    .delay(600)
+    .duration(400)
+    .style("opacity", 1);
+
+  // Non-explicit bars (gray)
+  const nonExplicitBars = chart.selectAll(".non-explicit-bar")
+    .data(comparisonData)
+    .enter()
+    .append("g")
+    .attr("class", "non-explicit-bar");
+
+  nonExplicitBars.append("rect")
+    .attr("x", 0)
+    .attr("y", d => y(d.label) + barGap)
+    .attr("width", 0)
+    .attr("height", barHeight)
+    .attr("fill", "#666")
+    .attr("opacity", 0.6)
+    .transition()
+    .duration(800)
+    .delay(200)
+    .attr("width", d => x(d.nonExplicit));
+
+  nonExplicitBars.append("text")
+    .attr("x", d => x(d.nonExplicit) + 5)
+    .attr("y", d => y(d.label) + barGap + barHeight / 2)
+    .attr("dy", "0.35em")
+    .style("font-size", "13px")
+    .style("font-weight", "600")
+    .style("fill", "#666")
+    .style("opacity", 0)
+    .text(d => d.format(d.nonExplicit))
+    .transition()
+    .delay(800)
+    .duration(400)
+    .style("opacity", 1);
+
+  // Legend
+  const legend = chart.append("g")
+    .attr("transform", `translate(${chartW + 20}, 20)`);
+
+  const legendData = [
+    { label: "Explicit", color: "#b1162a", opacity: 0.9 },
+    { label: "Clean", color: "#666", opacity: 0.6 }
+  ];
+
+  legendData.forEach((item, i) => {
+    const legendItem = legend.append("g")
+      .attr("transform", `translate(0, ${i * 25})`);
+
+    legendItem.append("rect")
+      .attr("width", 18)
+      .attr("height", 12)
+      .attr("fill", item.color)
+      .attr("opacity", item.opacity);
+
+    legendItem.append("text")
+      .attr("x", 24)
+      .attr("y", 6)
+      .attr("dy", "0.35em")
+      .style("font-size", "13px")
+      .style("font-weight", "600")
+      .style("fill", "#333")
+      .text(item.label);
+  });
+
+  // Add footer note
+  g.append("text")
+    .attr("x", w / 2)
+    .attr("y", h - 10)
+    .attr("text-anchor", "middle")
+    .style("font-size", "12px")
+    .style("font-style", "italic")
+    .style("fill", "#666")
+    .text(`Dataset: ${data.explicit_count.toLocaleString()} explicit tracks vs ${data.non_explicit_count.toLocaleString()} clean tracks`);
+}
+
 export function renderStep(stepId, story) {
   clearChart();
 
-  if (stepId === 0) return drawIntro(story);
-  if (stepId === 1) return drawHitDefinition(story);
-  if (stepId === 2) return drawPopularityHist(story);
-  if (stepId === 3) return drawEffectSizes(story);
-  if (stepId === 4) return drawFeatureLines01(story);
-  if (stepId === 5) return drawStructureLines(story);
-  if (stepId === 6) return drawGenreHeatmap(story);
-  if (stepId === 7) return drawGenrePopularity(story);
-  if (stepId === 8) return drawBlueprintDeltas(story);
-  if (stepId === 9) return drawFeatureVariance(story);
-  if (stepId === 10) return drawTakeaway(story);
+  if (stepId === 0) return renderSongCards(story);
+  if (stepId === 1) return renderBlueprintEarly(story);
+  if (stepId === 2) return drawIntro(story);
+  if (stepId === 3) return renderPopularitySpectrum(story);
+  if (stepId === 4) return renderFeatureSeparation(story);
+  if (stepId === 5) return renderVibeShift(story);
+  if (stepId === 6) return drawStructureLines(story);
+  if (stepId === 7) return renderExplicitAnalysis(story);
+  if (stepId === 8) return renderGenreFingerprint(story);
+  if (stepId === 9) return drawGenrePopularity(story);
+  if (stepId === 10) return drawBlueprintDeltas(story);
+  if (stepId === 11) return drawFeatureVariance(story);
+  if (stepId === 12) return renderEditorialClose(story);
 
   d3.select("#chart").append("p").text("Unknown step: " + stepId);
 }
