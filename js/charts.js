@@ -596,6 +596,9 @@ function renderPopularitySpectrum(story) {
     .attr("fill", "#888")
     .attr("opacity", 0.7);
 
+  // Calculate total for percentage calculations
+  const totalTracks = d3.sum(bins, (d) => d.count);
+
   // Hit zone shading (hidden initially)
   const hitZone = g
     .append("rect")
@@ -634,6 +637,30 @@ function renderPopularitySpectrum(story) {
     .style("opacity", 0)
     .text(`Hit threshold (top 10%): ${hitThreshold?.toFixed(0) || "?"}`);
 
+  // Explanation label for the red area (hidden initially)
+  const redAreaExplanation = g
+    .append("text")
+    .attr("class", "red-area-explanation")
+    .attr("x", hitLineX + (w - hitLineX) / 2)
+    .attr("y", h * 0.3)
+    .attr("text-anchor", "middle")
+    .style("fill", "#b1162a")
+    .style("font-size", "12px")
+    .style("font-weight", "600")
+    .style("opacity", 0);
+
+  redAreaExplanation
+    .append("tspan")
+    .attr("x", hitLineX + (w - hitLineX) / 2)
+    .attr("dy", "0")
+    .text("Tracks in this red zone");
+
+  redAreaExplanation
+    .append("tspan")
+    .attr("x", hitLineX + (w - hitLineX) / 2)
+    .attr("dy", "1.2em")
+    .text("are considered 'hits'");
+
   // Zone labels (hidden initially)
   const longTailLabel = g
     .append("text")
@@ -647,6 +674,10 @@ function renderPopularitySpectrum(story) {
     .style("opacity", 0)
     .text("The long tail");
 
+  // Calculate hit zone percentage
+  const hitCount = d3.sum(bins.filter((d, i) => i >= hitBinIndex), (d) => d.count);
+  const hitPercentage = ((hitCount / totalTracks) * 100).toFixed(1);
+
   const hitZoneLabel = g
     .append("text")
     .attr("class", "zone-label")
@@ -657,7 +688,13 @@ function renderPopularitySpectrum(story) {
     .style("font-size", "14px")
     .style("font-weight", "700")
     .style("opacity", 0)
-    .text("Hit zone");
+    .text(`Hit zone (${hitPercentage}% of tracks)`);
+
+  // Add long tail percentage
+  const longTailCount = d3.sum(bins.filter((d, i) => i < hitBinIndex), (d) => d.count);
+  const longTailPercentage = ((longTailCount / totalTracks) * 100).toFixed(1);
+  
+  longTailLabel.text(`The long tail (${longTailPercentage}% of tracks)`);
 
   // Animate threshold reveal after 800ms
   setTimeout(() => {
@@ -681,6 +718,12 @@ function renderPopularitySpectrum(story) {
       .duration(400)
       .delay(400)
       .attr("opacity", 1);
+
+    redAreaExplanation
+      .transition()
+      .duration(400)
+      .delay(600)
+      .style("opacity", 1);
 
     longTailLabel
       .transition()
@@ -2025,206 +2068,245 @@ function drawFeatureLines01(story) {
 /* ---------- STEP 5: STRUCTURE (tempo + duration) ---------- */
 function drawStructureLines(story) {
   const rows = story?.feature_anatomy?.means_by_pop_band || [];
-  const keys = ["tempo", "duration_min"].filter((k) => rows[0] && k in rows[0]);
 
-  const { g, w, h } = baseSvg("Structure profile", "Tempo + duration across popularity bands");
+  const { g, w, h, svg } = baseSvg("Structure Profile: Duration vs Tempo", "");
 
-  if (!rows.length || !keys.length) {
+  if (!rows.length) {
     g.append("text")
       .attr("x", w / 2)
       .attr("y", h / 2)
       .attr("text-anchor", "middle")
       .style("fill", "#666")
       .style("font-weight", 800)
-      .text("No structure (tempo/duration) data found in story.json");
+      .text("No structure data found");
     return;
   }
 
-  const bands = rows.map((d) => d.pop_band);
-  const x = d3.scalePoint().domain(bands).range([0, w]).padding(0.3);
+  // Prepare data: each row represents a popularity band
+  const data = rows.map((r) => ({
+    band: r.pop_band,
+    tempo: Number(r.tempo || 120),
+    duration: Number(r.duration_min || 3.5),
+    isHit: r.pop_band.startsWith("9") || r.pop_band.startsWith("8"), // top 20% bands
+  }));
 
-  const series = keys.map((k) => {
-    const vals = rows.map((r) => Number(r[k]));
-    const min = d3.min(vals);
-    const max = d3.max(vals);
-    const norm = (v) => (max === min ? 0.5 : (v - min) / (max - min));
-    return {
-      key: k,
-      pts: rows.map((r) => ({
-        pop_band: r.pop_band,
-        raw: Number(r[k]),
-        value: norm(Number(r[k])),
-      })),
-    };
-  });
-
-  // Reduce chart height to make room for explanation text
-  const chartH = h - 50; // Reduce by 50px for text space
+  // Scales
+  const xExtent = d3.extent(data, (d) => d.tempo);
+  const yExtent = d3.extent(data, (d) => d.duration);
   
-  const y = d3.scaleLinear().domain([0, 1]).range([chartH, 0]);
+  const x = d3.scaleLinear()
+    .domain([xExtent[0] - 5, xExtent[1] + 5])
+    .range([0, w])
+    .nice();
+
+  const y = d3.scaleLinear()
+    .domain([yExtent[0] - 0.3, yExtent[1] + 0.3])
+    .range([h, 0])
+    .nice();
+
+  // Grid
   addGridY(g, y, w);
 
+  // Axes
   g.append("g")
-    .attr("transform", `translate(0,${chartH})`)
-    .call(d3.axisBottom(x))
+    .attr("transform", `translate(0,${h})`)
+    .call(d3.axisBottom(x).ticks(8))
+    .call((g) => g.select(".domain").attr("stroke", "#ddd"))
     .selectAll("text")
-    .attr("transform", "rotate(-35)")
-    .style("text-anchor", "end")
-    .style("fill", "#444")
-    .style("font-size", `${AXIS_TICK_SIZE}px`);
+    .style("fill", "#555")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
+    .style("font-weight", "600");
 
   g.append("g")
-    .call(d3.axisLeft(y).ticks(5))
+    .call(d3.axisLeft(y).ticks(6))
+    .call((g) => g.select(".domain").remove())
     .selectAll("text")
-    .style("fill", "#444")
-    .style("font-size", `${AXIS_TICK_SIZE}px`);
+    .style("fill", "#555")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
+    .style("font-weight", "600");
+
+  // Add axis break indicators (showing axes don't start at 0)
+  // X-axis break
+  const xBreak = g.append("g").attr("class", "axis-break");
+  xBreak.append("line")
+    .attr("x1", -8)
+    .attr("y1", h - 5)
+    .attr("x2", 8)
+    .attr("y2", h + 5)
+    .attr("stroke", "#999")
+    .attr("stroke-width", 2);
+  xBreak.append("line")
+    .attr("x1", -8)
+    .attr("y1", h + 5)
+    .attr("x2", 8)
+    .attr("y2", h - 5)
+    .attr("stroke", "#999")
+    .attr("stroke-width", 2);
+
+  // Y-axis break
+  const yBreak = g.append("g").attr("class", "axis-break");
+  yBreak.append("line")
+    .attr("x1", -5)
+    .attr("y1", h + 8)
+    .attr("x2", 5)
+    .attr("y2", h - 8)
+    .attr("stroke", "#999")
+    .attr("stroke-width", 2);
+  yBreak.append("line")
+    .attr("x1", -5)
+    .attr("y1", h - 8)
+    .attr("x2", 5)
+    .attr("y2", h + 8)
+    .attr("stroke", "#999")
+    .attr("stroke-width", 2);
+
+  // Add note about non-zero axes
+  g.append("text")
+    .attr("x", -5)
+    .attr("y", h + 30)
+    .attr("text-anchor", "start")
+    .style("fill", "#888")
+    .style("font-size", "10px")
+    .style("font-style", "italic")
+    .text("⚠ Axes do not start at 0");
 
   // Axis labels
   g.append("text")
     .attr("text-anchor", "middle")
     .attr("x", w / 2)
-    .attr("y", chartH + 50)
+    .attr("y", h + 45)
     .style("fill", "#444")
-    .style("font-weight", "600")
+    .style("font-weight", "700")
     .style("font-size", `${AXIS_LABEL_SIZE}px`)
-    .text("Popularity Band");
+    .text("Tempo (BPM)");
 
   g.append("text")
     .attr("text-anchor", "middle")
     .attr("transform", "rotate(-90)")
-    .attr("x", -chartH / 2)
-    .attr("y", -50)
+    .attr("x", -h / 2)
+    .attr("y", -45)
     .style("fill", "#444")
-    .style("font-weight", "600")
+    .style("font-weight", "700")
     .style("font-size", `${AXIS_LABEL_SIZE}px`)
-    .text("Normalized Value (0-1)");
+    .text("Duration (minutes)");
 
-  const color = d3.scaleOrdinal().domain(keys).range(["#111", "#777"]);
+  // Add tempo clustering annotation (shows the tight range)
+  const tempoRange = xExtent[1] - xExtent[0];
+  g.append("rect")
+    .attr("x", x(xExtent[0]))
+    .attr("y", 0)
+    .attr("width", x(xExtent[1]) - x(xExtent[0]))
+    .attr("height", h)
+    .attr("fill", "#4682B4")  // Steel blue - neutral color
+    .attr("opacity", 0.08)
+    .attr("stroke", "#4682B4")
+    .attr("stroke-width", 1.5)
+    .attr("stroke-dasharray", "5,3");
 
-  const line = d3
-    .line()
-    .x((d) => x(d.pop_band))
-    .y((d) => y(d.value))
-    .curve(d3.curveMonotoneX);
+  // Add explanatory label on the shaded area - moved lower for readability
+  g.append("text")
+    .attr("x", x(xExtent[0]) + (x(xExtent[1]) - x(xExtent[0])) / 2)
+    .attr("y", h * 0.65)  // Moved from 50% to 65% down
+    .attr("text-anchor", "middle")
+    .style("fill", "#2E5C7A")
+    .style("font-size", "11px")
+    .style("font-weight", "600")
+    .style("font-style", "italic")
+    .style("opacity", 0)
+    .text(`↔ All bands cluster within ${tempoRange.toFixed(1)} BPM ↔`)
+    .transition()
+    .duration(600)
+    .delay(1200)
+    .style("opacity", 0.7);
 
-  const structureLineGroup = g.append("g").attr("class", "structure-lines");
-  
-  series.forEach((s) => {
-    const path = structureLineGroup
-      .append("path")
-      .datum(s.pts)
-      .attr("fill", "none")
-      .attr("stroke", color(s.key))
-      .attr("stroke-width", 2.2)
-      .attr("class", `line-${s.key}`)
-      .attr("d", line)
-      .style("cursor", "pointer");
+  // Points
+  const points = g
+    .selectAll(".structure-point")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("class", "structure-point")
+    .attr("cx", (d) => x(d.tempo))
+    .attr("cy", (d) => y(d.duration))
+    .attr("r", 0)
+    .attr("fill", (d) => (d.isHit ? "#b1162a" : "#666"))
+    .attr("opacity", (d) => (d.isHit ? 0.9 : 0.4))
+    .attr("stroke", (d) => (d.isHit ? "#8b0000" : "none"))
+    .attr("stroke-width", 2);
 
-    // Animate line drawing
-    const n = path.node();
-    if (n) {
-      const len = n.getTotalLength();
-      path
-        .attr("stroke-dasharray", `${len} ${len}`)
-        .attr("stroke-dashoffset", len)
-        .transition()
-        .duration(700)
-        .ease(d3.easeCubicOut)
-        .attr("stroke-dashoffset", 0);
-    }
+  // Animate points in
+  points
+    .transition()
+    .duration(600)
+    .delay((d, i) => i * 80)
+    .ease(d3.easeCubicOut)
+    .attr("r", (d) => (d.isHit ? 10 : 7));
 
-    // Add hover highlighting
-    path
-      .on("mouseenter", function() {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr("stroke-width", 4)
-          .attr("opacity", 1);
-        
-        structureLineGroup.selectAll("path")
-          .filter((_, i, nodes) => nodes[i] !== this)
-          .transition()
-          .duration(200)
-          .attr("opacity", 0.2);
-      })
-      .on("mouseleave", function() {
-        structureLineGroup.selectAll("path")
-          .transition()
-          .duration(200)
-          .attr("stroke-width", 2.2)
-          .attr("opacity", 1);
-      });
+  // Add labels for each point with smart positioning to avoid overlap
+  const labels = g
+    .selectAll(".band-label")
+    .data(data)
+    .enter()
+    .append("text")
+    .attr("class", "band-label")
+    .attr("x", (d, i) => {
+      // Offset labels slightly to the right for odd indices
+      return x(d.tempo) + (i % 2 === 0 ? 0 : 8);
+    })
+    .attr("y", (d, i) => {
+      // Alternate labels above and below to reduce overlap
+      const offset = i % 2 === 0 ? -18 : -12;
+      return y(d.duration) + offset;
+    })
+    .attr("text-anchor", (d, i) => i % 2 === 0 ? "middle" : "start")
+    .style("fill", (d) => (d.isHit ? "#b1162a" : "#444"))
+    .style("font-size", "10px")
+    .style("font-weight", "700")
+    .style("opacity", 0)
+    .text((d) => d.band);
 
-    const interpretations = {
-      "tempo": "Tempo patterns vary by genre, but hits often cluster in the 120-130 BPM range – the 'sweet spot' for dancing and engagement.",
-      "duration_min": "Shorter songs show a weak negative correlation with popularity – the 'TikTok brain' effect is subtle but real. Attention spans are shrinking."
-    };
+  labels
+    .transition()
+    .duration(400)
+    .delay((d, i) => i * 80 + 400)
+    .style("opacity", 0.9);
 
-    g.selectAll(`circle.${s.key}`)
-      .data(s.pts)
-      .enter()
-      .append("circle")
-      .attr("cx", (d) => x(d.pop_band))
-      .attr("cy", (d) => y(d.value))
-      .attr("r", 3.4)
-      .attr("fill", color(s.key))
-      .style("cursor", "pointer")
-      .on("mouseenter", function(event, d) {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr("r", 6);
-        
-        showEnhancedTip(
-          s.key,
-          `Band: ${d.pop_band} | Raw: ${d.raw.toFixed(2)} | Normalized: ${d.value.toFixed(3)}`,
-          interpretations[s.key.toLowerCase()] || `This structural feature evolves across popularity bands.`,
-          event.clientX,
-          event.clientY
-        );
-      })
-      .on("mouseleave", function() {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr("r", 3.4);
-        hideTip();
-      });
-  });
-
-  // Calculate trend strength to highlight weak patterns
-  const calculateTrendStrength = (pts) => {
-    if (pts.length < 2) return 0;
-    const first = pts[0].value;
-    const last = pts[pts.length - 1].value;
-    return Math.abs(last - first);
-  };
-
-  // Add explanation of normalization and highlight weak trends
+  // Add annotations in clear positions
   setTimeout(() => {
-    // Normalization explanation - split into two lines for clarity
-    g.append("text")
-      .attr("x", w / 2)
-      .attr("y", chartH + 65)
-      .attr("text-anchor", "middle")
-      .style("fill", "#666")
-      .style("font-size", "12px")
-      .style("font-weight", 600)
-      .style("font-style", "italic")
-      .text("Note: Values are scaled to 0-1 to compare trends on the same scale.");
-    
-    g.append("text")
-      .attr("x", w / 2)
-      .attr("y", chartH + 85)
-      .attr("text-anchor", "middle")
-      .style("fill", "#666")
-      .style("font-size", "12px")
-      .style("font-weight", 600)
-      .style("font-style", "italic")
-      .text("This shows whether tempo or duration change with popularity, not their exact values.");
+    // Tempo clustering annotation - more centered
+    addAnnotation(
+      svg,
+      w * 0.50,
+      h * 0.20,
+      `Tempo clustering: ${tempoRange.toFixed(1)} BPM range`,
+      400,
+      "top-center"
+    );
 
-  }, 1500);
+    // Duration variation annotation - moved more to center-right
+    addAnnotation(
+      svg,
+      w * 0.70,
+      h * 0.88,
+      "Duration varies more than tempo",
+      350,
+      "bottom-right"
+    );
+
+    // Key insight annotation - moved further down below the title
+    g.append("text")
+      .attr("x", w / 2)
+      .attr("y", -5)
+      .attr("text-anchor", "middle")
+      .style("fill", "#b1162a")
+      .style("font-size", "12px")
+      .style("font-weight", "700")
+      .style("opacity", 0)
+      .text("Red = top 20% popularity bands (hits)")
+      .transition()
+      .duration(400)
+      .style("opacity", 1);
+  }, 1000);
 }
 
 /* ---------- STEP 6: GENRE HEATMAP ---------- */
