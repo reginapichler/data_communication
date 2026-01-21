@@ -9,6 +9,7 @@
     "median_tempo": 122.03,
     "example_hits": [
       {
+        "track_id": "3nqQXoyQOWXiESFLlDF1hG",
         "track_name": "Unholy (feat. Kim Petras)",
         "artists": "Sam Smith;Kim Petras",
         "track_genre": "dance;pop",
@@ -25,6 +26,58 @@
         "tempo": 131.121
       },
       {
+        "track_id": "3uBQSYIlSktNT1LJADU6TJ",
+        "track_name": "Estrellas - Cinco Estrellas",
+        "artists": "Attaque 77",
+        "track_genre": "ska",
+        "popularity": 34.0,
+        "danceability": 0.612,
+        "energy": 0.812,
+        "loudness": -6.517,
+        "instrumentalness": 8.47e-06,
+        "acousticness": 0.0399,
+        "duration_min": 2.1473333333333335,
+        "valence": 0.851,
+        "speechiness": 0.0655,
+        "liveness": 0.111,
+        "tempo": 145.63
+      },
+      {
+        "track_id": "7BXuu4tenwNfOlY9bztDR3",
+        "track_name": "S\u00e9 Que Te Duele",
+        "artists": "Alejandro Fern\u00e1ndez;Morat",
+        "track_genre": "latin;rock",
+        "popularity": 0.0,
+        "danceability": 0.691,
+        "energy": 0.854,
+        "loudness": -4.77,
+        "instrumentalness": 0.0,
+        "acousticness": 0.239,
+        "duration_min": 3.802216666666667,
+        "valence": 0.779,
+        "speechiness": 0.0735,
+        "liveness": 0.0969,
+        "tempo": 94.96
+      },
+      {
+        "track_id": "3nqQXoyQOWXiESFLlDF1hG",
+        "track_name": "Unholy (feat. Kim Petras)",
+        "artists": "Sam Smith;Kim Petras",
+        "track_genre": "dance;pop",
+        "popularity": 100.0,
+        "danceability": 0.714,
+        "energy": 0.472,
+        "loudness": -7.375,
+        "instrumentalness": 4.51e-06,
+        "acousticness": 0.013,
+        "duration_min": 2.6157166666666667,
+        "valence": 0.238,
+        "speechiness": 0.0864,
+        "liveness": 0.266,
+        "tempo": 131.121
+      },
+      {
+        "track_id": "2tTmW7RDtMQtBk7m2rYeSw",
         "track_name": "Quevedo: Bzrp Music Sessions, Vol. 52",
         "artists": "Bizarrap;Quevedo",
         "track_genre": "hip-hop",
@@ -41,6 +94,7 @@
         "tempo": 128.033
       },
       {
+        "track_id": "5ww2BF9slyYgNOk37BlC4u",
         "track_name": "La Bachata",
         "artists": "Manuel Turizo",
         "track_genre": "latin;latino;reggae;reggaeton",
@@ -57,6 +111,7 @@
         "tempo": 124.98
       },
       {
+        "track_id": "1IHWl5LamUGEuP4ozKQSXZ",
         "track_name": "Tit\u00ed Me Pregunt\u00f3",
         "artists": "Bad Bunny",
         "track_genre": "latin;latino;reggae;reggaeton",
@@ -73,6 +128,7 @@
         "tempo": 106.672
       },
       {
+        "track_id": "6Sq7ltF9Qa7SNFBsV5Cogx",
         "track_name": "Me Porto Bonito",
         "artists": "Bad Bunny;Chencho Corleone",
         "track_genre": "latin;latino;reggae;reggaeton",
@@ -89,6 +145,7 @@
         "tempo": 92.005
       },
       {
+        "track_id": "5IgjP7X4th6nMNDh4akUHb",
         "track_name": "Under The Influence",
         "artists": "Chris Brown",
         "track_genre": "dance;pop",
@@ -105,6 +162,7 @@
         "tempo": 116.992
       },
       {
+        "track_id": "5Eax0qFko2dh7Rl2lYs3bx",
         "track_name": "Efecto",
         "artists": "Bad Bunny",
         "track_genre": "latin;latino;reggae;reggaeton",
@@ -121,6 +179,7 @@
         "tempo": 98.047
       },
       {
+        "track_id": "3k3NWokhRRkEPhCzPmV8TW",
         "track_name": "Ojitos Lindos",
         "artists": "Bad Bunny;Bomba Est\u00e9reo",
         "track_genre": "latin;latino;reggae;reggaeton",
@@ -137,6 +196,7 @@
         "tempo": 79.928
       },
       {
+        "track_id": "6xGruZOHLs39ZbVccQTuPZ",
         "track_name": "Glimpse of Us",
         "artists": "Joji",
         "track_genre": "pop",
@@ -153,6 +213,7 @@
         "tempo": 169.914
       },
       {
+        "track_id": "6Xom58OOXk2SoU711L2IXO",
         "track_name": "Moscow Mule",
         "artists": "Bad Bunny",
         "track_genre": "latin;latino;reggae;reggaeton",

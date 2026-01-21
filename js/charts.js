@@ -78,7 +78,7 @@ function baseSvg(title, subtitle) {
     top: 48,
     right: 24,
     bottom: 88,
-    left: 90  // Slightly larger for clearer axis-label spacing
+    left: 120  // Increased to prevent y-axis labels from being cut off
   };
   const w = width - margin.left - margin.right;
   const h = height - margin.top - margin.bottom;
@@ -119,7 +119,7 @@ function baseSvg(title, subtitle) {
   // Title / subtitle inside chart area
   g.append("text")
     .attr("x", 0)
-    .attr("y", -28)
+    .attr("y", -32)
     .attr("font-size", 15)
     .attr("font-weight", 800)
     .attr("fill", "#111")
@@ -128,8 +128,8 @@ function baseSvg(title, subtitle) {
   if (subtitle) {
     g.append("text")
       .attr("x", 0)
-      .attr("y", -8)
-      .attr("font-size", 12)
+      .attr("y", -12)
+      .attr("font-size", 11)
       .attr("fill", "#555")
       .text(subtitle);
   }
@@ -298,6 +298,14 @@ function renderBlueprintEarly(story) {
     "duration_min"
   ].filter((k) => deltas[k] != null);
 
+  // Feature display names
+  const featureLabels = {
+    "instrumentalness": "Instrumentalness",
+    "loudness": "Loudness",
+    "danceability": "Danceability",
+    "duration_min": "Duration (minutes)"
+  };
+
   const rows = keyFeatures.map((k) => ({
     feature: k,
     delta: Number(deltas[k]),
@@ -319,30 +327,51 @@ function renderBlueprintEarly(story) {
   }
 
   const maxAbsDelta = d3.max(rows, (d) => Math.abs(d.delta)) || 1;
-  const domain = [-maxAbsDelta * 1.1, maxAbsDelta * 1.1];
+  const domain = [-maxAbsDelta * 1.3, maxAbsDelta * 1.3];
 
   const x = d3.scaleLinear().domain(domain).range([0, w]);
-  const y = d3.scaleBand().domain(rows.map((r) => r.feature)).range([0, h]).padding(0.3);
+  const y = d3.scaleBand().domain(rows.map((r) => r.feature)).range([0, h]).padding(0.4);
+
+  // X-axis
+  g.append("g")
+    .attr("transform", `translate(0, ${h})`)
+    .call(d3.axisBottom(x).ticks(6))
+    .call((g) => g.select(".domain").attr("stroke", "#ccc"))
+    .selectAll("text")
+    .style("fill", "#666")
+    .style("font-size", "11px");
+
+  // X-axis label
+  g.append("text")
+    .attr("text-anchor", "middle")
+    .attr("x", w / 2)
+    .attr("y", h + 45)
+    .style("fill", "#555")
+    .style("font-size", "13px")
+    .style("font-weight", "600")
+    .text("Difference from average (hit – all tracks)");
 
   // Zero line
   g.append("line")
     .attr("x1", x(0))
     .attr("x2", x(0))
-    .attr("y1", -10)
-    .attr("y2", h + 10)
-    .attr("stroke", "#ddd")
-    .attr("stroke-width", 2);
+    .attr("y1", 0)
+    .attr("y2", h)
+    .attr("stroke", "#999")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", "4,4");
 
   // Y-axis (feature labels)
   g.append("g")
-    .call(d3.axisLeft(y))
+    .call(d3.axisLeft(y).tickFormat(d => featureLabels[d] || d))
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").remove())
     .selectAll("text")
+    .attr("x", -5)
+    .attr("text-anchor", "end")
     .style("fill", "#333")
-    .style("font-size", "14px")
-    .style("font-weight", "600")
-    .style("text-transform", "capitalize");
+    .style("font-size", "13px")
+    .style("font-weight", "600");
 
   // Bars with animation
   const bars = g
@@ -366,7 +395,7 @@ function renderBlueprintEarly(story) {
     .ease(d3.easeCubicOut)
     .attr("width", (d) => Math.abs(x(d.delta) - x(0)));
 
-  // Add value labels to show the actual differences
+  // Add value labels OUTSIDE bars with consistent offset
   const labels = g
     .selectAll(".blueprint-label")
     .data(rows)
@@ -376,12 +405,13 @@ function renderBlueprintEarly(story) {
     .attr("y", (d) => y(d.feature) + y.bandwidth() / 2)
     .attr("dy", "0.35em")
     .attr("x", (d) => {
-      const barEnd = d.delta >= 0 ? x(d.delta) : x(d.delta);
-      return barEnd + (d.delta >= 0 ? 8 : -8);
+      const barEnd = x(d.delta);
+      // Position label OUTSIDE the bar with consistent 8px offset
+      return d.delta >= 0 ? barEnd + 8 : barEnd - 8;
     })
     .attr("text-anchor", (d) => (d.delta >= 0 ? "start" : "end"))
     .style("fill", "#333")
-    .style("font-size", "13px")
+    .style("font-size", "12px")
     .style("font-weight", "700")
     .style("opacity", 0)
     .text((d) => {
@@ -395,15 +425,15 @@ function renderBlueprintEarly(story) {
     .delay((d, i) => i * 100 + 700)
     .style("opacity", 1);
 
-  // Add informative annotation
+  // Add informative annotation (positioned to avoid clipping)
   setTimeout(() => {
     addAnnotation(
       svg,
-      w * 0.7,
-      h * 0.15,
+      w * 0.55,
+      h * 0.3,
       "What we saw in those songs — now abstracted across thousands of tracks.",
       400,
-      "top-right"
+      "top-center"
     );
   }, 1200);
 }
@@ -462,7 +492,15 @@ function drawIntro(story) {
     .style("overflow", "visible");
 
   const rows = intro.example_hits || [];
-  rows.slice(0, 8).forEach((r, i) => {
+  // Remove duplicates by track_id, sort by popularity (descending), and take top 7
+  const uniqueRows = Array.from(
+    new Map(rows.map(r => [r.track_id || r.track_name, r])).values()
+  );
+  const topRows = uniqueRows
+    .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+    .slice(0, 7);
+  
+  topRows.forEach((r, i) => {
     const row = list
       .append("div")
       .style("display", "grid")
@@ -1695,22 +1733,47 @@ function renderVibeShift(story) {
     .domain([0, 1])
     .range([h, 0]);
 
-  // Highlight zone for highest popularity band
-  const lastBandX = x(bands[bands.length - 1]);
-  const bandWidth = w / bands.length;
+  // Highlight zone for all hit bands (60+)
+  const hitBands = bands.filter(b => {
+    const mid = parseInt(b.split('-')[0]);
+    return mid >= 60;
+  });
   
-  g.append("rect")
-    .attr("class", "highlight-zone")
-    .attr("x", lastBandX - bandWidth / 2)
-    .attr("y", 0)
-    .attr("width", bandWidth)
-    .attr("height", h)
-    .attr("fill", "rgba(177, 22, 42, 0.08)")
-    .attr("opacity", 0)
-    .transition()
-    .duration(800)
-    .delay(1400)
-    .attr("opacity", 1);
+  if (hitBands.length > 0) {
+    const firstHitBandX = x(hitBands[0]);
+    const lastHitBandX = x(hitBands[hitBands.length - 1]);
+    const bandWidth = w / bands.length;
+    const zoneWidth = lastHitBandX - firstHitBandX + bandWidth;
+    
+    g.append("rect")
+      .attr("class", "highlight-zone")
+      .attr("x", firstHitBandX - bandWidth / 2)
+      .attr("y", 0)
+      .attr("width", zoneWidth)
+      .attr("height", h)
+      .attr("fill", "rgba(177, 22, 42, 0.08)")
+      .attr("opacity", 0)
+      .transition()
+      .duration(800)
+      .delay(1400)
+      .attr("opacity", 1);
+
+    // Label for highlighted zone (centered over hit zone)
+    const zoneCenterX = (firstHitBandX + lastHitBandX) / 2;
+    g.append("text")
+      .attr("x", zoneCenterX)
+      .attr("y", -5)
+      .attr("text-anchor", "middle")
+      .style("fill", "#b1162a")
+      .style("font-size", "10px")
+      .style("font-weight", "700")
+      .style("opacity", 0)
+      .text("Top hits (60+)")
+      .transition()
+      .duration(600)
+      .delay(1600)
+      .style("opacity", 1);
+  }
 
   // Subtle grid
   addGridY(g, y, w);
@@ -3007,6 +3070,14 @@ function drawBlueprintDeltas(story) {
 
   // Only 4 key features for intuitive comparison
   const features = ["instrumentalness", "loudness", "danceability", "duration_min"];
+  
+  // Feature display names
+  const featureLabels = {
+    "instrumentalness": "Instrumentalness",
+    "loudness": "Loudness",
+    "danceability": "Danceability",
+    "duration_min": "Duration (minutes)"
+  };
 
   const { g, w, h, svg } = baseSvg(
     "What Hits Sound Like",
@@ -3043,6 +3114,12 @@ function drawBlueprintDeltas(story) {
     return;
   }
 
+  // Color scale for songs
+  const songColors = ["#e63946", "#457b9d", "#f4a261", "#2a9d8f", "#e76f51"];
+  const colorScale = d3.scaleOrdinal()
+    .domain(exampleHits.map(s => s.track_name))
+    .range(songColors);
+
   // Scales
   const xExtent = d3.extent(songPoints, (d) => d.deviation);
   const xPadding = (xExtent[1] - xExtent[0]) * 0.15;
@@ -3055,18 +3132,19 @@ function drawBlueprintDeltas(story) {
     .scaleBand()
     .domain(features)
     .range([0, h])
-    .padding(0.4);
+    .padding(0.6);
 
   // Y-axis (features)
   g.append("g")
-    .call(d3.axisLeft(y))
+    .call(d3.axisLeft(y).tickFormat(d => featureLabels[d] || d))
     .call((g) => g.select(".domain").remove())
     .call((g) => g.selectAll(".tick line").remove())
     .selectAll("text")
+    .attr("x", -5)
+    .attr("text-anchor", "end")
     .style("fill", "#333")
-    .style("font-size", "14px")
-    .style("font-weight", "600")
-    .style("text-transform", "capitalize");
+    .style("font-size", "13px")
+    .style("font-weight", "600");
 
   // X-axis
   g.append("g")
@@ -3087,14 +3165,14 @@ function drawBlueprintDeltas(story) {
     .style("font-weight", "600")
     .text("Difference from average (hit – all tracks)");
 
-  // Zero line with label
+  // Zero line with label (moved to bottom to avoid title overlap)
   const zeroLine = g.append("g");
   
   zeroLine
     .append("line")
     .attr("x1", x(0))
     .attr("x2", x(0))
-    .attr("y1", -5)
+    .attr("y1", 0)
     .attr("y2", h)
     .attr("stroke", "#999")
     .attr("stroke-width", 2)
@@ -3103,14 +3181,15 @@ function drawBlueprintDeltas(story) {
   zeroLine
     .append("text")
     .attr("x", x(0))
-    .attr("y", -12)
+    .attr("y", h + 28)
     .attr("text-anchor", "middle")
     .style("fill", "#666")
-    .style("font-size", "11px")
+    .style("font-size", "10px")
     .style("font-weight", "600")
+    .style("font-style", "italic")
     .text("Average Spotify track");
 
-  // Plot dots (each = one hit song)
+  // Plot dots (each = one hit song) - color-coded by song
   const dots = g
     .selectAll(".hit-dot")
     .data(songPoints)
@@ -3119,11 +3198,11 @@ function drawBlueprintDeltas(story) {
     .attr("class", "hit-dot")
     .attr("cx", (d) => x(d.deviation))
     .attr("cy", (d) => y(d.feature) + y.bandwidth() / 2)
-    .attr("r", 4.5)
-    .attr("fill", "#b1162a")
-    .attr("fill-opacity", 0.7)
+    .attr("r", 5)
+    .attr("fill", (d) => colorScale(d.song.track_name))
+    .attr("fill-opacity", 0.8)
     .attr("stroke", "#fff")
-    .attr("stroke-width", 1)
+    .attr("stroke-width", 1.5)
     .style("cursor", "pointer")
     .attr("opacity", 0);
 
@@ -3157,10 +3236,36 @@ function drawBlueprintDeltas(story) {
       d3.select(this)
         .transition()
         .duration(150)
-        .attr("r", 4.5)
-        .attr("fill-opacity", 0.7);
+        .attr("r", 5)
+        .attr("fill-opacity", 0.8);
       hideTip();
     });
+
+  // Add legend (song names with colors)
+  const legend = g.append("g")
+    .attr("class", "legend")
+    .attr("transform", `translate(${w - 200}, -10)`);
+
+  exampleHits.forEach((song, i) => {
+    const legendRow = legend.append("g")
+      .attr("transform", `translate(0, ${i * 18})`);
+
+    legendRow.append("circle")
+      .attr("cx", 5)
+      .attr("cy", 0)
+      .attr("r", 4)
+      .attr("fill", colorScale(song.track_name))
+      .attr("stroke", "#fff")
+      .attr("stroke-width", 1);
+
+    legendRow.append("text")
+      .attr("x", 14)
+      .attr("y", 1)
+      .attr("font-size", "10px")
+      .attr("fill", "#333")
+      .attr("dominant-baseline", "middle")
+      .text(song.track_name.length > 25 ? song.track_name.substring(0, 25) + "..." : song.track_name);
+  });
 }
 
 /* ---------- STEP 8.1: FEATURE VARIANCE (Hits vs Non-hits) ---------- */
@@ -3398,10 +3503,11 @@ function drawFeatureVariance(story) {
 
       g.append("text")
         .attr("x", 0)
-        .attr("y", h + 60)
+        .attr("y", h + 70)
         .style("fill", "#444")
-        .style("font-size", `${AXIS_LABEL_SIZE}px`)
+        .style("font-size", "12px")
         .style("font-weight", "600")
+        .style("font-style", "italic")
         .text(`On average, hits are ${homogeneity} than non-hits across these features.`);
     })
     .catch(() => {
@@ -3604,13 +3710,9 @@ function renderSongCards(story) {
     return;
   }
 
-  // Select representative songs
-  const topSong = examples[0]; // Highest popularity
-  const medianIdx = Math.floor(examples.length / 2);
-  const medianSong = examples[medianIdx];
-  const lowSong = examples[examples.length - 1]; // Lowest in top examples
-  
-  const selectedSongs = [topSong, medianSong, lowSong];
+  // The first 3 songs in examples are pre-selected representatives:
+  // [0] = Top hit, [1] = Median, [2] = Long tail
+  const selectedSongs = examples.slice(0, 3);
 
   // Create HTML container
   const root = d3.select("#chart");
@@ -3641,7 +3743,8 @@ function renderSongCards(story) {
 
     const card = cardsWrapper
       .append("div")
-      .attr("class", `song-card song-card-${idx}`);
+      .attr("class", `song-card song-card-${idx}`)
+      .attr("data-expanded", "false");
 
     // Popularity badge
     let badge = "";
@@ -3672,14 +3775,21 @@ function renderSongCards(story) {
       .attr("class", "song-card-popularity")
       .html(`<span class="label">Popularity</span> <span class="value">${song.popularity || 0}</span>`);
 
-    // Audio features (danceability, energy, loudness)
+    // Expandable content: All features (hidden by default)
+    const expandableContent = card
+      .append("div")
+      .attr("class", "song-card-expandable");
+
+    // All audio features
     const features = [
       { name: "Danceability", value: song.danceability || 0, max: 1 },
       { name: "Energy", value: song.energy || 0, max: 1 },
-      { name: "Loudness", value: (song.loudness || -30) + 30, max: 30 } // Normalize loudness from [-30, 0] to [0, 30]
+      { name: "Loudness", value: (song.loudness || -30) + 30, max: 30 },
+      { name: "Valence", value: song.valence || 0, max: 1 },
+      { name: "Instrumentalness", value: song.instrumentalness || 0, max: 1 }
     ];
 
-    const featuresWrapper = card
+    const featuresWrapper = expandableContent
       .append("div")
       .attr("class", "song-card-features");
 
@@ -3708,7 +3818,77 @@ function renderSongCards(story) {
         .attr("class", "feature-value")
         .text(feature.value.toFixed(2));
     });
+
+    // Toggle button
+    const toggleBtn = card
+      .append("button")
+      .attr("class", "song-card-toggle")
+      .attr("aria-expanded", "false")
+      .html('<span class="toggle-text">Show details</span><span class="toggle-icon">↓</span>');
+
+    // Add click handler
+    toggleBtn.on("click", function() {
+      const isExpanded = card.attr("data-expanded") === "true";
+      card.attr("data-expanded", !isExpanded);
+      toggleBtn.attr("aria-expanded", !isExpanded);
+      toggleBtn.select(".toggle-text").text(isExpanded ? "Show details" : "Hide details");
+      toggleBtn.select(".toggle-icon").text(isExpanded ? "↓" : "↑");
+    });
   });
+
+  // Add Spotify players to the LEFT COLUMN (step 0 - Cold Open)
+  const step0 = d3.select('.step[data-step="0"]');
+  
+  if (!step0.empty()) {
+    // Remove existing Spotify players section if it exists
+    step0.select(".spotify-players-section").remove();
+    
+    const playersSection = step0
+      .append("div")
+      .attr("class", "spotify-players-section");
+
+    playersSection
+      .append("h4")
+      .attr("class", "spotify-players-heading")
+      .text("Listen to the tracks");
+
+    const playersGrid = playersSection
+      .append("div")
+      .attr("class", "spotify-players-grid");
+
+    // Render Spotify players for each song (ordered best to worst)
+    selectedSongs.forEach((song, idx) => {
+      if (!song || !song.track_id) return;
+
+      let label = "";
+      if (idx === 0) label = "🏆 Top 1%";
+      else if (idx === 1) label = "📊 Median";
+      else label = "📉 Long Tail";
+
+      const playerCard = playersGrid
+        .append("div")
+        .attr("class", "spotify-player-card");
+
+      playerCard
+        .append("div")
+        .attr("class", "spotify-player-label")
+        .text(label);
+
+      playerCard
+        .append("div")
+        .attr("class", "spotify-embed")
+        .html(`
+          <iframe 
+            src="https://open.spotify.com/embed/track/${song.track_id}?utm_source=generator&theme=0" 
+            width="100%" 
+            height="152" 
+            frameborder="0" 
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+            loading="lazy">
+          </iframe>
+        `);
+    });
+  }
 }
 
 /**

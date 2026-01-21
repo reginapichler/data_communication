@@ -232,21 +232,40 @@ explicit_rate = float(np.mean(df["explicit"].astype(int))) if "explicit" in df.c
 # ========================
 # SECTION 1: INTRO STATS
 # ========================
-# Find top 10 most popular tracks (for "example hits")
-# Include audio features for visualization overlays
+# Select 3 representative tracks for the cold open:
+# 1. Top hit (popularity ~100)
+# 2. Median track (popularity ~34)
+# 3. Long tail track (popularity < 10)
 feature_cols_for_examples = [
-    "track_name", "artists", "track_genre", "popularity",
+    "track_id", "track_name", "artists", "track_genre", "popularity",
     "danceability", "energy", "loudness", "instrumentalness",
     "acousticness", "duration_min", "valence", "speechiness",
     "liveness", "tempo"
 ]
 available_cols = [col for col in feature_cols_for_examples if col in df.columns]
 
-examples = (
+# Get median popularity value
+median_pop = df["popularity"].median()
+
+# Select representative songs
+top_hit = df.sort_values("popularity", ascending=False).head(1)[available_cols].to_dict(orient="records")[0]
+
+# For median: exclude ASMR/sleep/ambient genres to get a real music track
+median_candidates = df[~df["track_genre"].str.contains("sleep|asmr|ambient|white-noise", case=False, na=False)]
+median_track = median_candidates.iloc[(median_candidates["popularity"] - median_pop).abs().argsort()[:1]][available_cols].to_dict(orient="records")[0] if len(median_candidates) > 0 else df.iloc[(df["popularity"] - median_pop).abs().argsort()[:1]][available_cols].to_dict(orient="records")[0]
+
+# For long tail: pick a low-popularity track (excluding sleep/ASMR)
+long_tail_candidates = df[(df["popularity"] < 10) & ~df["track_genre"].str.contains("sleep|asmr|ambient|white-noise", case=False, na=False)]
+long_tail = long_tail_candidates.sample(n=1, random_state=42)[available_cols].to_dict(orient="records")[0] if len(long_tail_candidates) > 0 else df.sort_values("popularity").head(1)[available_cols].to_dict(orient="records")[0]
+
+# Also get top 10 hits for the dot plot visualization
+top_10_hits = (
     df.sort_values("popularity", ascending=False)
       .head(10)[available_cols]
       .to_dict(orient="records")
 )
+
+examples = [top_hit, median_track, long_tail] + top_10_hits
 
 # Compile intro section: overview statistics
 intro = {
@@ -447,13 +466,7 @@ for genre, r in ratio.head(10).items():
     })
 
 # ---------- SECTION 1: Intro + hook ----------
-# Example "hits" (top popularity tracks)
-# Include audio features for visualization overlays
-examples = (
-    df.sort_values("popularity", ascending=False)
-      .head(10)[available_cols]
-      .to_dict(orient="records")
-)
+# (examples already defined above)
 
 intro = {
     "tracks": n_tracks,
