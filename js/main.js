@@ -28,8 +28,8 @@ function updateHitGateMotif(stepId, story) {
 
   const hit = getHitGate(story);
 
-  // show only from step 3 (popularity spectrum) onwards
-  if (hit == null || stepId < 3) {
+  // show only from step 4 (popularity spectrum) onwards
+  if (hit == null || stepId < 4) {
     el.style.display = "none";
     return;
   }
@@ -48,46 +48,43 @@ const COPY = {
   producer: {
     titles: [
       "The Opening Act",
-      "The Pattern Revealed",
+      "Real Hits Up Close",
+      "Core Hit Signature",
       "Cracking the Hit Code",
       "The Popularity Reality",
-      "Audio Breakdown",
       "Vibe Tuning",
       "Structure Secrets",
       "The Profanity Factor",
       "Genre Blueprints",
       "Genre Winners",
-      "Anatomy Explained",
       "Consistency Test",
       "Action Plan"
     ],
     bodies: [
       "Three songs. Three different worlds. Before we chase patterns and blueprints, let's meet the spectrum: a viral smash, a steady performer, and a buried gem.",
-      "Less instrumental, louder, more danceable. These are the key separators. The numbers are small, but the impact is decisive.",
+      "Real hits plotted as dots. Less instrumental, louder, more danceable, shorter. Sound differences—not causes.",
+      "Those song examples showed the pattern. Here's the abstraction: 4 core features separate hits from the rest. Instrumentalness (strongest), loudness, danceability, duration. These show direction and relative strength—not exact values to copy.",
       "As a producer, you're chasing that elusive hit. Let's scan the data for clues in features and genres.",
       "Popularity follows a power law – most tracks flop, so aim for the tail, not the middle.",
-      "Three features dominate: less instrumental, louder, more danceable. These are your leverage points.",
       "Dial in the vibe: Danceability, energy, valence shift as tracks climb the charts.",
       "Do shorter songs outperform longer ones in the streaming era? A little. Hits skew slightly shorter on average — but it's not a rulebook. Treat duration as a small lever; tempo is weaker context.",
       "Explicit tracks have 80% higher hit rates than clean ones (16.9% vs 9.5%). Profanity correlates with streaming success.",
       "Are genres converging? Check 5 representative genres to see if the \"streaming sound\" is real or myth.",
       "Some genres crush it in popularity and hits. Learn from their overperformance.",
-      "Now the full breakdown: exact deltas, all features, sample songs. What Step 1 revealed, now explained in detail.",
       "Are hits more consistent than non-hits? Check how tight the feature spread gets.",
       "Synthesize it: Prioritize features, respect genres, iterate with data in mind."
     ],
     callouts: [
       "<strong>First impression:</strong> See how audio features shift across the popularity ladder – from chart-toppers to the long tail.",
-      "<strong>Key insight:</strong> Instrumentalness (-0.11), loudness (+1.19 dB), danceability (+0.04). These are your primary levers.",
+      "<strong>Dot plot:</strong> Each dot = one hit song. Shows concrete sound differences across 4 key features.",
+      "<strong>The 4 core separators:</strong> Instrumentalness (strongest), loudness, danceability, duration. Direction and relative strength.",
       "<strong>Producer takeaway:</strong> We'll define a clear hit threshold, then isolate the few features that most separate hits.",
       "<strong>Producer takeaway:</strong> Don't compare to the median — compare to the top tail (what you're trying to reach).",
-      "<strong>Producer takeaway:</strong> Three levers: instrumentalness, loudness, danceability. Start here, not with 20 features.",
       "<strong>Producer takeaway:</strong> Treat this as a \"vibe target\" you can A/B test (energy + danceability + valence).",
       "<strong>Producer takeaway:</strong> Duration matters (shorter = slight edge). Tempo doesn't—all bands cluster 119–125 BPM. Tempo is a constraint (stay danceable), not a lever for differentiation.",
       "<strong>Producer takeaway:</strong> Don't fear explicit content – data shows it helps, not hurts. But brand and audience matter too.",
       "<strong>Producer takeaway:</strong> If genres are distinct, honor that. If converging, lean into the universal patterns.",
       "<strong>Producer takeaway:</strong> Use the toggle (Popularity / Explicit / Hit share) to pick your reference targets.",
-      "<strong>Producer takeaway:</strong> Full anatomy revealed: all features, precise values, contextual songs. Descriptive, not prescriptive.",
       "<strong>Producer takeaway:</strong> Consistency can signal a market \"sound\" — diversity can be a differentiator.",
       "<strong>Producer takeaway:</strong> Pick a genre target → tune the top separators → then refine structure."
     ]
@@ -96,46 +93,43 @@ const COPY = {
   culture: {
     titles: [
       "The Opening Act",
-      "The Pattern Revealed",
+      "What Hits Sound Like",
+      "The Core Signature",
       "The Mystery of a Hit",
       "The Uneven Spotlight",
-      "Dissecting the Sound",
       "The Vibe Shift",
       "Myths of Structure",
       "Language & Taboo",
       "Genre DNA",
       "Chart Conquerors",
-      "The Full Blueprint",
       "Homogeneity vs Diversity",
       "What It All Means"
     ],
     bodies: [
       "Three songs. Three different realities. One climbed to the top. One lives in the middle. One never broke through. What separates them?",
-      "The pattern is clear: hits are less instrumental, louder, more danceable. The numbers reveal a sonic signature that defines modern success.",
+      "Each dot is a hit song. Less instrumental, louder, more danceable, shorter. These are sound differences—not explanations.",
+      "Those songs showed the reality—now here's the pattern. Four features define the core signature: less instrumental (more vocal-driven), louder, more danceable, and shorter. This is the sonic profile of streaming success—direction and strength, not exact values.",
       "Imagine scrolling through Spotify, wondering: What turns a song into a global sensation? Let's dive into the data and uncover the hidden patterns behind today's hits.",
       "Popularity isn't fair. Most tracks fade into obscurity, while a lucky few capture the world's ears. This long tail reveals the brutal reality of streaming culture.",
-      "Yes, hits sound different. Three traits cluster: less instrumental, louder, more danceable. The sonic signature is real.",
       "As popularity rises, the music's vibe evolves. Danceability climbs, energy surges, valence dances – reflecting the moods that hook listeners.",
       "Do shorter songs outperform longer ones? Slightly — hits lean shorter, but there's no magic cutoff. Tempo is even less decisive than the mythology suggests.",
       "Profanity isn't a barrier — it's a magnet. Explicit tracks dominate: 16.9% hit rate vs 9.5% for clean tracks. Cultural norms and algorithms intertwine.",
       "The \"Pop Singularity\" question: are genres converging into one streaming sound? We compare 5 distinct genres to see if sonic identities survive or blur.",
       "Some genres dominate the charts far beyond their numbers. Pop and k-pop reign supreme, while others struggle to break through the algorithm's gate.",
-      "Now, the full anatomy: exact deltas, all features, real hit songs plotted as context. What Step 1 revealed, now explained with numbers.",
       "Do hits converge on a narrow sound, or stay diverse? Variance shows whether success rewards conformity or variety.",
       "Beyond the charts, what does this say about us? Algorithms amplify trends, culture shapes sound, and in the quest for hits, diversity sometimes gets lost."
     ],
     callouts: [
       "<strong>Opening scene:</strong> The gulf between success and obscurity starts here. Let's explore what the numbers reveal.",
-      "<strong>The signature:</strong> Less instrumental, louder, more danceable. This is the sonic DNA of streaming success.",
+      "<strong>Sound, not theory:</strong> Real hit songs as dots. Four features. Concrete differences before we ask why.",
+      "<strong>The 4-feature signature:</strong> Less instrumental, louder, more danceable, shorter. This is the authoritative answer to what separates hits from the rest.",
       "<strong>Opening scene:</strong> We're not predicting the future – just mapping the present. Correlation, not causation.",
       "<strong>Plot twist:</strong> Streaming funnels attention like a spotlight, leaving most in the dark.",
-      "<strong>The signature:</strong> Three traits define hits—less instrumental, louder, more danceable. The pattern is consistent.",
       "<strong>Mood check:</strong> Hits mirror the zeitgeist – danceable energy that matches our fleeting emotions.",
       "<strong>Reality check:</strong> Duration varies, tempo doesn't. All popularity bands cluster tightly around 120 BPM. Tempo is a universal constraint—everyone stays in the danceable range—while duration shows weak variation.",
       "<strong>Cultural signal:</strong> Explicit content isn't censored by the algorithm — it's rewarded. What does that say about streaming culture?",
       "<strong>Pop Singularity check:</strong> The verdict reveals whether genres retain sonic identities or merge into algorithmic homogeneity.",
       "<strong>Power dynamics:</strong> Genre success mixes art, industry, and the invisible hand of recommendation engines.",
-      "<strong>The anatomy explained:</strong> All features, exact deltas, contextual songs. Descriptive, not causal. This is what Step 1 meant.",
       "<strong>Tension point:</strong> If hits cluster tightly, the algorithm rewards sameness; if not, diversity still survives.",
       "<strong>Final reflection:</strong> In chasing hits, we glimpse the soul of modern music: optimized, yet yearning for variety."
     ]
@@ -145,13 +139,14 @@ const COPY = {
 // Step groups shown in the rail (upgrade #5)
 const groups = [
   { label: "The Opening", start: 0, end: 0 },
-  { label: "The Pattern", start: 1, end: 1 },
-  { label: "The Quest", start: 2, end: 2 },
-  { label: "The Spectrum", start: 3, end: 3 },
-  { label: "The Anatomy", start: 4, end: 7 },
+  { label: "Real Hits", start: 1, end: 1 },
+  { label: "The Pattern", start: 2, end: 2 },
+  { label: "The Quest", start: 3, end: 3 },
+  { label: "The Spectrum", start: 4, end: 4 },
+  { label: "The Anatomy", start: 5, end: 7 },
   { label: "The Genres", start: 8, end: 9 },
-  { label: "The Blueprint", start: 10, end: 11 },
-  { label: "The Meaning", start: 12, end: 12 }
+  { label: "Consistency", start: 10, end: 10 },
+  { label: "The Meaning", start: 11, end: 11 }
 ];
 
 let currentStep = 0;

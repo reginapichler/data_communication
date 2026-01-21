@@ -290,14 +290,11 @@ function renderBlueprintEarly(story) {
   const hitMeans = story?.hit_blueprint?.hit_means || {};
   const globalMeans = story?.hit_blueprint?.global_means || {};
 
-  // HIGH-LEVEL REVEAL: Show the key differentiators (5-6 features)
-  // More than a glimpse, less than full detail
+  // CORE HIT SIGNATURE: The 4 key features (same as Step 1 dot plot)
   const keyFeatures = [
     "instrumentalness",
-    "danceability",
     "loudness",
-    "energy",
-    "acousticness",
+    "danceability",
     "duration_min"
   ].filter((k) => deltas[k] != null);
 
@@ -308,7 +305,7 @@ function renderBlueprintEarly(story) {
     overall: Number(globalMeans[k]),
   }));
 
-  const { g, w, h, svg } = baseSvg("The Pattern Revealed", "");
+  const { g, w, h, svg } = baseSvg("The Core Hit Signature", "");
 
   if (!rows.length) {
     g.append("text")
@@ -404,7 +401,7 @@ function renderBlueprintEarly(story) {
       svg,
       w * 0.7,
       h * 0.15,
-      "These are the key separators between hits and the rest.",
+      "What we saw in those songs — now abstracted across thousands of tracks.",
       400,
       "top-right"
     );
@@ -3005,247 +3002,165 @@ function drawGenrePopularity(story) {
 
 /* ---------- STEP 8: HIT BLUEPRINT DELTAS ---------- */
 function drawBlueprintDeltas(story) {
-  const deltas = story?.hit_blueprint?.deltas || {};
-  const hitMeans = story?.hit_blueprint?.hit_means || {};
   const globalMeans = story?.hit_blueprint?.global_means || {};
+  const exampleHits = story?.intro?.example_hits || [];
 
-  const pick = [
-    "danceability",
-    "energy",
-    "valence",
-    "acousticness",
-    "speechiness",
-    "liveness",
-    "instrumentalness",
-    "tempo",
-    "duration_min",
-  ].filter((k) => deltas[k] != null);
+  // Only 4 key features for intuitive comparison
+  const features = ["instrumentalness", "loudness", "danceability", "duration_min"];
 
-  const rows = pick.map((k) => ({
-    feature: k,
-    delta: Number(deltas[k]),
-    hit: Number(hitMeans[k]),
-    overall: Number(globalMeans[k]),
-  }));
+  const { g, w, h, svg } = baseSvg(
+    "What Hits Sound Like",
+    "How far real hit songs deviate from the average Spotify track"
+  );
 
-  const { g, w, h } = baseSvg("Anatomy Explained", "Difference between hit average and overall average (hit - overall)");
+  // Calculate deviations for each song × feature combination
+  const songPoints = [];
+  exampleHits.forEach((song) => {
+    features.forEach((feature) => {
+      const songValue = Number(song[feature]);
+      const avgValue = Number(globalMeans[feature]);
+      
+      if (Number.isFinite(songValue) && Number.isFinite(avgValue)) {
+        const deviation = songValue - avgValue;
+        songPoints.push({
+          song,
+          feature,
+          songValue,
+          avgValue,
+          deviation
+        });
+      }
+    });
+  });
 
-  if (!rows.length) {
+  if (!songPoints.length) {
     g.append("text")
       .attr("x", w / 2)
       .attr("y", h / 2)
       .attr("text-anchor", "middle")
       .style("fill", "#666")
-      .style("font-weight", 800)
-      .text("No hit blueprint delta data found in story.json");
+      .text("No hit song data available");
     return;
   }
 
-  const min = d3.min(rows, (d) => Math.min(d.delta, 0)) ?? -1;
-  const max = d3.max(rows, (d) => Math.max(d.delta, 0)) ?? 1;
+  // Scales
+  const xExtent = d3.extent(songPoints, (d) => d.deviation);
+  const xPadding = (xExtent[1] - xExtent[0]) * 0.15;
+  const x = d3
+    .scaleLinear()
+    .domain([xExtent[0] - xPadding, xExtent[1] + xPadding])
+    .range([0, w]);
 
-  const x = d3.scaleLinear().domain([min, max]).nice().range([0, w]);
-  const y = d3.scaleBand().domain(rows.map((r) => r.feature)).range([0, h]).padding(0.25);
+  const y = d3
+    .scaleBand()
+    .domain(features)
+    .range([0, h])
+    .padding(0.4);
 
+  // Y-axis (features)
   g.append("g")
     .call(d3.axisLeft(y))
+    .call((g) => g.select(".domain").remove())
+    .call((g) => g.selectAll(".tick line").remove())
     .selectAll("text")
-    .style("fill", "#444")
-    .style("font-size", `${AXIS_TICK_SIZE}px`);
+    .style("fill", "#333")
+    .style("font-size", "14px")
+    .style("font-weight", "600")
+    .style("text-transform", "capitalize");
 
-  // Axis labels
+  // X-axis
+  g.append("g")
+    .attr("transform", `translate(0, ${h})`)
+    .call(d3.axisBottom(x).ticks(6))
+    .call((g) => g.select(".domain").attr("stroke", "#ccc"))
+    .selectAll("text")
+    .style("fill", "#666")
+    .style("font-size", "11px");
+
+  // X-axis label
   g.append("text")
     .attr("text-anchor", "middle")
     .attr("x", w / 2)
-    .attr("y", h + 50)
-    .style("fill", "#444")
+    .attr("y", h + 45)
+    .style("fill", "#555")
+    .style("font-size", "13px")
     .style("font-weight", "600")
-    .style("font-size", `${AXIS_LABEL_SIZE}px`)
-    .text("Delta (Hit - Overall)");
+    .text("Difference from average (hit – all tracks)");
 
-  g.append("text")
-    .attr("text-anchor", "middle")
-    .attr("transform", "rotate(-90)")
-    .attr("x", -h / 2)
-    .attr("y", -50)
-    .style("fill", "#444")
-    .style("font-weight", "600")
-    .style("font-size", `${AXIS_LABEL_SIZE}px`)
-    .text("Audio Feature");
-
-  g.append("line")
+  // Zero line with label
+  const zeroLine = g.append("g");
+  
+  zeroLine
+    .append("line")
     .attr("x1", x(0))
     .attr("x2", x(0))
-    .attr("y1", 0)
+    .attr("y1", -5)
     .attr("y2", h)
-    .attr("stroke", "#ddd")
-    .attr("stroke-width", 2);
+    .attr("stroke", "#999")
+    .attr("stroke-width", 2)
+    .attr("stroke-dasharray", "4,4");
 
-  const bars = g
-    .selectAll("rect")
-    .data(rows)
-    .enter()
-    .append("rect")
-    .attr("y", (d) => y(d.feature))
-    .attr("height", y.bandwidth())
+  zeroLine
+    .append("text")
     .attr("x", x(0))
-    .attr("width", 0)
-    .attr("rx", 7)
-    .attr("fill", (d) => (d.delta >= 0 ? "#111" : "#777"));
+    .attr("y", -12)
+    .attr("text-anchor", "middle")
+    .style("fill", "#666")
+    .style("font-size", "11px")
+    .style("font-weight", "600")
+    .text("Average Spotify track");
 
-  bars
+  // Plot dots (each = one hit song)
+  const dots = g
+    .selectAll(".hit-dot")
+    .data(songPoints)
+    .enter()
+    .append("circle")
+    .attr("class", "hit-dot")
+    .attr("cx", (d) => x(d.deviation))
+    .attr("cy", (d) => y(d.feature) + y.bandwidth() / 2)
+    .attr("r", 4.5)
+    .attr("fill", "#b1162a")
+    .attr("fill-opacity", 0.7)
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1)
+    .style("cursor", "pointer")
+    .attr("opacity", 0);
+
+  // Animate in
+  dots
     .transition()
-    .duration(650)
-    .attr("x", (d) => (d.delta >= 0 ? x(0) : x(d.delta)))
-    .attr("width", (d) => Math.abs(x(d.delta) - x(0)));
+    .duration(500)
+    .delay((d, i) => i * 8)
+    .attr("opacity", 1);
 
-  bars
-    .on("mousemove", (event, d) => {
+  // Hover interactions
+  dots
+    .on("mouseover", function (event, d) {
+      d3.select(this)
+        .transition()
+        .duration(150)
+        .attr("r", 7)
+        .attr("fill-opacity", 1);
+      
+      const direction = d.deviation >= 0 ? "higher" : "lower";
       showTip(
-        `<div style="font-weight:800;margin-bottom:4px;">${d.feature}</div>
-         <div>Delta: ${d.delta.toFixed(3)}</div>
-         <div>Hit mean: ${d.hit.toFixed(3)}</div>
-         <div>Overall mean: ${d.overall.toFixed(3)}</div>`,
+        `<strong>${d.song.track_name}</strong><br/>
+        <em>${d.song.artists}</em><br/>
+        <br/>
+        ${d.feature}: ${Math.abs(d.deviation).toFixed(2)} ${direction} than average`,
         event.clientX,
         event.clientY
       );
     })
-    .on("mouseleave", hideTip);
-
-  // Add precise value labels (this is the detailed view)
-  const labels = g
-    .selectAll(".blueprint-value-label")
-    .data(rows)
-    .enter()
-    .append("text")
-    .attr("class", "blueprint-value-label")
-    .attr("y", (d) => y(d.feature) + y.bandwidth() / 2)
-    .attr("dy", "0.35em")
-    .attr("x", (d) => {
-      const barEnd = d.delta >= 0 ? x(d.delta) : x(d.delta);
-      return barEnd + (d.delta >= 0 ? 8 : -8);
-    })
-    .attr("text-anchor", (d) => (d.delta >= 0 ? "start" : "end"))
-    .style("fill", "#333")
-    .style("font-size", "12px")
-    .style("font-weight", "700")
-    .style("opacity", 0)
-    .text((d) => {
-      const sign = d.delta >= 0 ? "+" : "";
-      return `${sign}${d.delta.toFixed(2)}`;
-    });
-
-  labels
-    .transition()
-    .duration(400)
-    .delay(700)
-    .style("opacity", 1);
-
-  // === SONG OVERLAYS (moved from early blueprint) ===
-  const exampleHits = story?.intro?.example_hits || [];
-  
-  if (exampleHits.length > 0) {
-    const numSongs = Math.min(5, exampleHits.length);
-    const step = Math.floor(exampleHits.length / numSongs);
-    const selectedSongs = [];
-    
-    for (let i = 0; i < numSongs; i++) {
-      const idx = Math.min(i * step, exampleHits.length - 1);
-      selectedSongs.push(exampleHits[idx]);
-    }
-
-    const songPoints = [];
-    selectedSongs.forEach((song, songIdx) => {
-      rows.forEach((row) => {
-        const feature = row.feature;
-        const songValue = Number(song[feature]);
-        
-        if (Number.isFinite(songValue) && Number.isFinite(row.overall)) {
-          const deviation = songValue - row.overall;
-          songPoints.push({
-            song,
-            feature,
-            value: songValue,
-            deviation,
-            songIdx,
-            row
-          });
-        }
-      });
-    });
-
-    const songColors = ["#f59e0b", "#10b981", "#8b5cf6", "#ec4899", "#06b6d4"];
-
-    setTimeout(() => {
-      if (songPoints.length === 0) return;
-
-      const points = g
-        .selectAll(".song-point")
-        .data(songPoints)
-        .enter()
-        .append("circle")
-        .attr("class", "song-point")
-        .attr("cx", (d) => x(d.deviation))
-        .attr("cy", (d) => y(d.feature) + y.bandwidth() / 2)
-        .attr("r", 5)
-        .attr("fill", (d) => songColors[d.songIdx % songColors.length])
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1.5)
-        .attr("opacity", 0)
-        .style("cursor", "pointer");
-
-      points
+    .on("mouseout", function () {
+      d3.select(this)
         .transition()
-        .duration(600)
-        .delay((d, i) => i * 10)
-        .attr("opacity", 0.85);
-
-      points
-        .on("mouseover", function (event, d) {
-          d3.select(this).transition().duration(200).attr("r", 8).attr("opacity", 1);
-          const direction = d.deviation >= 0 ? "higher" : "lower";
-          showTip(
-            `<strong>${d.song.track_name}</strong><br/>
-            <em>${d.song.artists}</em><br/>
-            Popularity: ${d.song.popularity}<br/>
-            <br/>
-            ${d.feature}: ${Math.abs(d.deviation).toFixed(2)} ${direction}`,
-            event.pageX,
-            event.pageY
-          );
-        })
-        .on("mouseout", function () {
-          d3.select(this).transition().duration(200).attr("r", 5).attr("opacity", 0.85);
-          hideTip();
-        });
-
-      // Song legend
-      const songLegend = g
-        .append("g")
-        .attr("class", "song-legend")
-        .attr("transform", `translate(10, ${h + 50})`);
-
-      songLegend
-        .append("text")
-        .attr("x", 0)
-        .attr("y", 0)
-        .style("font-size", "10px")
-        .style("font-weight", "600")
-        .style("fill", "#666")
-        .text("Sample hits:");
-
-      selectedSongs.forEach((song, i) => {
-        const item = songLegend.append("g").attr("transform", `translate(${i * 120}, 12)`);
-        item.append("circle").attr("r", 3).attr("fill", songColors[i]).attr("stroke", "#fff");
-        item.append("text")
-          .attr("x", 6)
-          .attr("y", 3)
-          .style("font-size", "9px")
-          .style("fill", "#444")
-          .text(song.track_name.length > 15 ? song.track_name.substring(0, 12) + "..." : song.track_name);
-      });
-    }, 1000);
-  }
+        .duration(150)
+        .attr("r", 4.5)
+        .attr("fill-opacity", 0.7);
+      hideTip();
+    });
 }
 
 /* ---------- STEP 8.1: FEATURE VARIANCE (Hits vs Non-hits) ---------- */
@@ -3506,12 +3421,11 @@ function renderEditorialClose(story) {
   const hitMeans = story?.hit_blueprint?.hit_means || {};
   const globalMeans = story?.hit_blueprint?.global_means || {};
 
+  // Same 4 features as Core Signature (Step 2)
   const keyFeatures = [
-    "danceability",
-    "energy",
-    "loudness",
     "instrumentalness",
-    "acousticness",
+    "loudness",
+    "danceability",
     "duration_min"
   ].filter((k) => deltas[k] != null);
 
@@ -3521,8 +3435,6 @@ function renderEditorialClose(story) {
     hit: Number(hitMeans[k]),
     overall: Number(globalMeans[k]),
   }));
-
-  rows.sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta));
 
   const { g, w, h, svg } = baseSvg("", "");
 
@@ -3990,18 +3902,17 @@ export function renderStep(stepId, story) {
   clearChart();
 
   if (stepId === 0) return renderSongCards(story);
-  if (stepId === 1) return renderBlueprintEarly(story);
-  if (stepId === 2) return drawIntro(story);
-  if (stepId === 3) return renderPopularitySpectrum(story);
-  if (stepId === 4) return renderFeatureSeparation(story);
+  if (stepId === 1) return drawBlueprintDeltas(story);
+  if (stepId === 2) return renderBlueprintEarly(story);
+  if (stepId === 3) return drawIntro(story);
+  if (stepId === 4) return renderPopularitySpectrum(story);
   if (stepId === 5) return renderVibeShift(story);
   if (stepId === 6) return drawStructureLines(story);
   if (stepId === 7) return renderExplicitAnalysis(story);
   if (stepId === 8) return renderGenreFingerprint(story);
   if (stepId === 9) return drawGenrePopularity(story);
-  if (stepId === 10) return drawBlueprintDeltas(story);
-  if (stepId === 11) return drawFeatureVariance(story);
-  if (stepId === 12) return renderEditorialClose(story);
+  if (stepId === 10) return drawFeatureVariance(story);
+  if (stepId === 11) return renderEditorialClose(story);
 
   d3.select("#chart").append("p").text("Unknown step: " + stepId);
 }
