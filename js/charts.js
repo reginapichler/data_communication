@@ -2336,13 +2336,13 @@ function renderGenreFingerprint(story) {
   // Select 5 most distinctive genres for clarity
   // Prioritize: pop (baseline), grunge, chill, hip-hop, progressive-house
   const targetGenres = ["pop", "grunge", "chill", "hip-hop", "progressive-house"];
-  const genres = targetGenres.filter(g => allGenres.includes(g));
+  const genres = targetGenres.filter(genre => allGenres.includes(genre));
   
   // If any are missing, fill from top genres
   if (genres.length < 5) {
-    for (const g of allGenres) {
-      if (!genres.includes(g) && genres.length < 5) {
-        genres.push(g);
+    for (const genre of allGenres) {
+      if (!genres.includes(genre) && genres.length < 5) {
+        genres.push(genre);
       }
     }
   }
@@ -2350,48 +2350,76 @@ function renderGenreFingerprint(story) {
   // Filter z-scores to only include selected genres
   const zScores = allZScores.filter((d) => genres.includes(d.genre));
 
-  // Scales
+  // Layout: Use more of the available space, well-centered
+  const margin = { left: 100, right: 20, top: 40, bottom: 80 };
+  const chartW = w - margin.left - margin.right;
+  const chartH = h * 0.7;
+  
+  // Create a group with proper margins
+  const chartGroup = g.append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+  
+  // Scales with optimal spacing
   const x = d3.scaleBand()
     .domain(features)
-    .range([0, w])
-    .padding(0.12);
+    .range([0, chartW])
+    .padding(0.15);  // Balanced padding for horizontal readability
 
   const y = d3.scaleBand()
     .domain(genres)
-    .range([0, h])
-    .padding(0.15);
+    .range([0, chartH])
+    .padding(0.12);  // Balanced padding for vertical readability
 
-  // Diverging color scale (blue = below average, red = above average)
+  // Diverging color scale with reduced saturation for editorial look
   const maxAbs = d3.max(zScores, (d) => Math.abs(d.z)) || 2;
+  
+  // Custom interpolator with softer colors
+  const softRdBu = (t) => {
+    const baseColor = d3.interpolateRdBu(t);
+    const rgb = d3.rgb(baseColor);
+    // Desaturate by blending with gray
+    const gray = (rgb.r + rgb.g + rgb.b) / 3;
+    const saturationFactor = 0.75; // Reduce saturation to 75%
+    return d3.rgb(
+      rgb.r * saturationFactor + gray * (1 - saturationFactor),
+      rgb.g * saturationFactor + gray * (1 - saturationFactor),
+      rgb.b * saturationFactor + gray * (1 - saturationFactor)
+    );
+  };
+  
   const color = d3.scaleDiverging()
     .domain([-maxAbs, 0, maxAbs])
-    .interpolator(d3.interpolateRdBu);
+    .interpolator(softRdBu);
 
-  // X-axis (features)
-  g.append("g")
-    .attr("transform", `translate(0,${h})`)
-    .call(d3.axisBottom(x))
+  // X-axis (features) - improved readability
+  chartGroup.append("g")
+    .attr("class", "x-axis")
+    .attr("transform", `translate(0,${chartH + 5})`)  // More spacing from heatmap
+    .call(d3.axisBottom(x).tickSize(0))
     .call((g) => g.select(".domain").remove())
     .selectAll("text")
-    .attr("transform", "rotate(-35)")
+    .attr("transform", "rotate(-30)")  // Gentler rotation
+    .attr("dy", "0.5em")
+    .attr("dx", "-0.8em")
     .style("text-anchor", "end")
-    .style("fill", "#444")
-    .style("font-size", "11px")
+    .style("fill", "#555")
+    .style("font-size", `${AXIS_TICK_SIZE}px`)
     .style("font-weight", "600")
     .style("text-transform", "capitalize");
 
-  // Y-axis (genres)
-  g.append("g")
-    .call(d3.axisLeft(y))
+  // Y-axis (genres) - bolder labels
+  chartGroup.append("g")
+    .attr("class", "y-axis")
+    .call(d3.axisLeft(y).tickSize(0))
     .call((g) => g.select(".domain").remove())
     .selectAll("text")
     .style("fill", "#333")
-    .style("font-size", "13px")
-    .style("font-weight", "700")
+    .style("font-size", "14px")  // Larger for emphasis
+    .style("font-weight", "700")  // Bold
     .style("text-transform", "capitalize");
 
-  // Heatmap cells with visual emphasis on extremes
-  const cells = g
+  // Heatmap cells with subtle, editorial styling
+  const cells = chartGroup
     .selectAll(".fingerprint-cell")
     .data(zScores)
     .enter()
@@ -2401,45 +2429,84 @@ function renderGenreFingerprint(story) {
     .attr("y", (d) => y(d.genre))
     .attr("width", x.bandwidth())
     .attr("height", y.bandwidth())
-    .attr("rx", 3)
+    .attr("rx", 4)  // Subtle rounding
     .attr("fill", (d) => color(d.z))
     .attr("opacity", (d) => {
-      // Emphasize extreme values (highly distinct)
+      // Subtle opacity variation for depth
       const absZ = Math.abs(d.z);
-      if (absZ > 1.5) return 1.0;  // Strong distinctiveness
-      if (absZ > 0.8) return 0.9;  // Moderate distinctiveness
-      return 0.6;  // Low distinctiveness (convergence)
+      if (absZ > 1.5) return 0.95;  // Strong distinctiveness
+      if (absZ > 0.8) return 0.85;  // Moderate distinctiveness
+      return 0.70;  // Low distinctiveness (convergence)
     })
     .style("cursor", "pointer")
-    .attr("stroke", (d) => {
-      // Border for highly distinctive cells
-      return Math.abs(d.z) > 1.5 ? "#333" : "none";
-    })
-    .attr("stroke-width", (d) => Math.abs(d.z) > 1.5 ? 1.5 : 0);
+    .attr("stroke", "none")  // Remove borders for cleaner look
+    .attr("stroke-width", 0);
 
-  // Tooltip on hover
+  // Premium hover interaction with card-style tooltips
   cells
     .on("mouseover", function (event, d) {
-      d3.select(this).attr("opacity", 1).attr("stroke", "#333").attr("stroke-width", 2);
+      // Highlight on hover with subtle border
+      d3.select(this)
+        .attr("opacity", 1)
+        .attr("stroke", "#2c3e50")
+        .attr("stroke-width", 2.5);
       
+      const zValue = d.z.toFixed(2);
       const direction = d.z > 0 ? "above" : "below";
       const absZ = Math.abs(d.z).toFixed(2);
-      showTip(
-        `<strong>${d.genre}</strong><br/>${d.feature}: ${absZ}σ ${direction} average`,
-        event.pageX,
-        event.pageY
-      );
+      
+      // Interpretation based on magnitude
+      let interpretation = "";
+      let emoji = "";
+      if (Math.abs(d.z) > 1.5) {
+        interpretation = d.z > 0 
+          ? "Strongly above average — highly distinctive"
+          : "Strongly below average — highly distinctive";
+        emoji = "🎯";
+      } else if (Math.abs(d.z) > 0.8) {
+        interpretation = d.z > 0 
+          ? "Moderately above average"
+          : "Moderately below average";
+        emoji = "📊";
+      } else {
+        interpretation = "Close to average — converging with other genres";
+        emoji = "⚖️";
+      }
+      
+      const tooltipHTML = `
+        <div style="padding: 10px; max-width: 250px;">
+          <div style="font-size: 14px; font-weight: 700; margin-bottom: 6px; text-transform: capitalize;">
+            ${emoji} ${d.genre} — ${d.feature}
+          </div>
+          <div style="font-size: 12px; color: #555; margin-bottom: 4px;">
+            <strong>Z-score:</strong> ${zValue}σ (${absZ} std dev ${direction} avg)
+          </div>
+          <div style="font-size: 11px; color: #666; margin-top: 6px; padding-top: 6px; border-top: 1px solid #ddd;">
+            ${interpretation}
+          </div>
+        </div>
+      `;
+      
+      // Use clientX/clientY for viewport-relative positioning
+      showTip(tooltipHTML, event.clientX, event.clientY);
     })
-    .on("mouseout", function () {
-      d3.select(this).attr("opacity", 0.85).attr("stroke", "none");
+    .on("mouseout", function (event, d) {
+      // Return to original state
+      const absZ = Math.abs(d.z);
+      const originalOpacity = absZ > 1.5 ? 0.95 : (absZ > 0.8 ? 0.85 : 0.70);
+      
+      d3.select(this)
+        .attr("opacity", originalOpacity)
+        .attr("stroke", "none")
+        .attr("stroke-width", 0);
       hideTip();
     });
 
-  // Legend
-  const legendWidth = 200;
+  // Legend - well-positioned and styled
+  const legendWidth = 180;
   const legendHeight = 12;
-  const legendX = w - legendWidth - 10;
-  const legendY = -35;
+  const legendX = chartW - legendWidth;
+  const legendY = -20;
 
   const legendScale = d3.scaleLinear()
     .domain([-maxAbs, maxAbs])
@@ -2466,7 +2533,7 @@ function renderGenreFingerprint(story) {
       .attr("stop-color", color(value));
   }
 
-  const legend = g.append("g")
+  const legend = chartGroup.append("g")
     .attr("class", "fingerprint-legend")
     .attr("transform", `translate(${legendX}, ${legendY})`);
 
@@ -2474,22 +2541,25 @@ function renderGenreFingerprint(story) {
     .attr("width", legendWidth)
     .attr("height", legendHeight)
     .style("fill", "url(#fingerprint-gradient)")
-    .attr("rx", 2);
+    .attr("rx", 3)
+    .attr("stroke", "#ccc")
+    .attr("stroke-width", 0.5);
 
   legend.append("g")
     .attr("transform", `translate(0, ${legendHeight})`)
     .call(legendAxis)
     .selectAll("text")
-    .style("font-size", "10px")
-    .style("fill", "#666");
+    .style("font-size", "9px")
+    .style("fill", "#666")
+    .style("font-weight", "600");
 
   legend.append("text")
     .attr("x", legendWidth / 2)
     .attr("y", -8)
     .attr("text-anchor", "middle")
-    .style("font-size", "11px")
-    .style("font-weight", "600")
-    .style("fill", "#444")
+    .style("font-size", "10px")
+    .style("font-weight", "700")
+    .style("fill", "#555")
     .text("Z-score (σ from average)");
 
   // Calculate convergence metric: avg absolute z-score
@@ -2505,16 +2575,21 @@ function renderGenreFingerprint(story) {
     verdict = "Genres stay clearly distinct — sonic identities persist.";
   }
 
-  // Add verdict text at the bottom
-  g.append("text")
-    .attr("x", w / 2)
-    .attr("y", h + 55)
+  // Add verdict text at the bottom (well-positioned)
+  chartGroup.append("text")
+    .attr("x", chartW / 2)
+    .attr("y", chartH + 85)  // Moved further down
     .attr("text-anchor", "middle")
     .style("font-size", "14px")
     .style("font-weight", "700")
     .style("font-style", "italic")
     .style("fill", "#b1162a")
-    .text(verdict);
+    .style("opacity", 0)
+    .text(verdict)
+    .transition()
+    .duration(800)
+    .delay(600)
+    .style("opacity", 1);
 
   // Add subtle context note
   g.append("text")
