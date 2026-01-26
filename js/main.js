@@ -77,7 +77,7 @@ const COPY = {
     callouts: [
       "<strong>First impression:</strong> See how audio features shift across the popularity ladder – from chart-toppers to the long tail.",
       "<strong>Dot plot:</strong> Each dot = one hit song. Shows concrete sound differences across 4 key features.",
-      "<strong>The 4 core separators:</strong> Instrumentalness (strongest), loudness, danceability, duration. Direction and relative strength.",
+      "<strong>The 4 core separators:</strong> Instrumentalness (strongest), loudness, danceability, duration.",
       "<strong>Producer takeaway:</strong> We'll define a clear hit threshold, then isolate the few features that most separate hits.",
       "<strong>Producer takeaway:</strong> Don't compare to the median — compare to the top tail (what you're trying to reach).",
       "<strong>Producer takeaway:</strong> Treat this as a \"vibe target\" you can A/B test (energy + danceability + valence).",
